@@ -1,0 +1,8 @@
+- name: Install Kubernetes 
+  hosts: controlplane worker1
+  tasks:
+  - name: Install kubeadm, kubelet, and kubectl
+    become: true
+    apt:
+      name: ['kubelet','kubeadm','kubectl']
+      state: present

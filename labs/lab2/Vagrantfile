@@ -1,0 +1,157 @@
+
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "base"
+
+  # Common configuration for all machines
+  config.vm.provider :virtualbox do |vb|
+    # Increase memory to 2GB
+    vb.memory = "2048"
+    # Increase CPU to 2 processors
+    vb.cpus = "2"
+  end
+
+  # client
+  config.vm.define "client" do |pc|
+    pc.vm.box = "josanescod/linuxlite66"
+    pc.vm.hostname = "client"
+    pc.vm.provider :virtualbox do |vb|
+      vb.name = "client"
+    end      
+    
+    pc.vm.provision "shell", inline: " ip route add default via 172.16.1.1"
+    pc.vm.network "private_network", type: "static", ip: "172.16.1.5", virtualbox__intnet: true
+
+    # Configure the DNS settings using a provisioner
+    pc.vm.provision "shell" do |shell|
+      shell.inline = <<-SHELL       
+
+        # Remove DNS-related settings from Netplan
+         rm -f /etc/netplan/*.yaml
+
+        # Edit /etc/systemd/resolved.conf to configure DNS
+        echo "[Resolve]" |  tee -a /etc/systemd/resolved.conf
+        echo "DNS=8.8.8.8 8.8.4.4" |  tee -a /etc/systemd/resolved.conf
+
+        # Restart systemd-resolved to apply the new DNS settings
+         systemctl restart systemd-resolved        
+      SHELL
+    end
+
+    # copy host files to client
+    pc.vm.provision "file", source: "./", destination: "~/"
+    
+    
+  end  
+
+  # controlplane
+  config.vm.define "controlplane" do |cp|
+    cp.vm.box = "josanescod/ubuntu2204"
+    cp.vm.hostname = "controlplane"
+    cp.vm.provider :virtualbox do |vb|
+      vb.name = "controlplane"
+    end
+    cp.vm.provision "shell", inline: " ip route add default via 172.16.2.1"
+    cp.vm.network "private_network", type: "static", ip: "172.16.2.5", virtualbox__intnet: true
+    # ssh-between-client-controlpanel
+    cp.trigger.after :up do |trigger|
+      trigger.run = { inline: 
+        "vagrant ssh client -- cp /vagrant/.vagrant/machines/controlplane/virtualbox/private_key ~/.ssh/idrsa_cp"
+      }
+    end
+
+    # Configure the DNS settings using a provisioner
+    cp.vm.provision "shell" do |shell|
+      shell.inline = <<-SHELL
+        # Remove DNS-related settings from Netplan
+         rm -f /etc/netplan/*.yaml
+
+        # Edit /etc/systemd/resolved.conf to configure DNS
+        echo "[Resolve]" |  tee -a /etc/systemd/resolved.conf
+        echo "DNS=8.8.8.8 8.8.4.4" |  tee -a /etc/systemd/resolved.conf
+
+        # Restart systemd-resolved to apply the new DNS settings
+         systemctl restart systemd-resolved
+      SHELL
+    end
+    
+  end  
+
+  # worker1
+  config.vm.define "worker1" do |wk1|
+    wk1.vm.box = "josanescod/ubuntu2204"
+    wk1.vm.hostname = "worker1"
+    wk1.vm.provider :virtualbox do |vb|
+      vb.name = "worker1"
+    end
+    wk1.vm.provision "shell", inline: " ip route add default via 172.16.3.1"
+    wk1.vm.network "private_network", type: "static", ip: "172.16.3.5", virtualbox__intnet: true
+    # ssh-between-client-worker1
+    wk1.trigger.after :up do |trigger|
+      trigger.run = { inline: 
+        "vagrant ssh client -- cp /vagrant/.vagrant/machines/worker1/virtualbox/private_key ~/.ssh/idrsa_wk1"
+      }
+    end
+    # Configure the DNS settings using a provisioner
+    wk1.vm.provision "shell" do |shell|
+      shell.inline = <<-SHELL
+        # Remove DNS-related settings from Netplan
+         rm -f /etc/netplan/*.yaml
+
+        # Edit /etc/systemd/resolved.conf to configure DNS
+        echo "[Resolve]" |  tee -a /etc/systemd/resolved.conf
+        echo "DNS=8.8.8.8 8.8.4.4" |  tee -a /etc/systemd/resolved.conf
+
+        # Restart systemd-resolved to apply the new DNS settings
+         systemctl restart systemd-resolved
+      SHELL
+    end
+  end  
+
+  # router1
+  config.vm.define "router1" do |r|
+    r.vm.box = "josanescod/alpine38"
+    r.vm.hostname = "router1"
+    r.vm.provider :virtualbox do |vb|
+      vb.name = "router1"
+    end      
+    
+    r.vm.provision "shell", inline: <<-SHELL      
+       apk update       
+      
+      # NAT
+      iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+      
+      # Allow all traffic between interfaces     
+      iptables -A FORWARD -i eth1 -o eth2 -j ACCEPT
+      iptables -A FORWARD -i eth2 -o eth1 -j ACCEPT
+      # Add rules for eth3
+      iptables -A FORWARD -i eth1 -o eth3 -j ACCEPT
+      iptables -A FORWARD -i eth3 -o eth1 -j ACCEPT     
+      iptables -A FORWARD -i eth2 -o eth3 -j ACCEPT
+      iptables -A FORWARD -i eth3 -o eth2 -j ACCEPT     
+      
+      SHELL
+
+      # networks
+      r.vm.network "private_network", type: "static", ip: "172.16.1.1", virtualbox__intnet: true  
+      r.vm.network "private_network", type: "static", ip: "172.16.2.1", virtualbox__intnet: true
+      r.vm.network "private_network", type: "static", ip: "172.16.3.1", virtualbox__intnet: true     
+
+       
+      # disconnect NAT links: client, controlplane, worker1
+      r.trigger.after :up do |trigger|
+        trigger.info = "disconnecting client NAT link"
+        trigger.run = {inline: "VBoxManage controlvm 'client' setlinkstate1 off"}        
+      end
+      r.trigger.after :up do |trigger|
+        trigger.info = "disconnecting controlplane link"
+        trigger.run = {inline: "VBoxManage controlvm 'controlplane' setlinkstate1 off"}        
+      end
+      r.trigger.after :up do |trigger|
+        trigger.info = "disconnecting worker1 link"
+        trigger.run = {inline: "VBoxManage controlvm 'worker1' setlinkstate1 off"}        
+      end      
+    end   
+             
+end
