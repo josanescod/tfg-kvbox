@@ -1,0 +1,30 @@
+- name: Install Kubeconform
+  hosts: controlplane
+  tasks:
+    - name: Download kubeconform binary
+      get_url:
+        url: https://github.com/yannh/kubeconform/releases/download/v0.6.3/kubeconform-linux-amd64.tar.gz
+        dest: /home/{{ ansible_user }}/kubeconform.tar.gz
+
+    - name: Extract kubeconform binary
+      ansible.builtin.unarchive:
+        src: /home/{{ ansible_user }}/kubeconform.tar.gz
+        dest: /home/{{ ansible_user }}/
+        remote_src: yes
+      become: yes
+
+    - name: Move kubeconform binary to /usr/local/bin
+      command: mv kubeconform /usr/local/bin/kubeconform
+      become: yes
+
+    - name: Delete LICENSE file
+      file:
+        path: /home/{{ ansible_user }}/LICENSE
+        state: absent
+      become: yes
+   
+    - name: Delete kubeconform-linux-amd64.tar.gz
+      file:
+        path: /home/{{ ansible_user }}/kubeconform.tar.gz
+        state: absent
+      become: yes

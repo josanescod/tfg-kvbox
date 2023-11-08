@@ -8,12 +8,12 @@ Vagrant.configure("2") do |config|
     # Increase memory to 2GB
     vb.memory = "2048"
     # Increase CPU to 2 processors
-    vb.cpus = "2"
+    vb.cpus = "2"    
   end
 
   # client
   config.vm.define "client" do |pc|
-    pc.vm.box = "josanescod/linuxlite66"
+    pc.vm.box = "josanescod/lubuntu22"
     pc.vm.hostname = "client"
     pc.vm.provider :virtualbox do |vb|
       vb.name = "client"

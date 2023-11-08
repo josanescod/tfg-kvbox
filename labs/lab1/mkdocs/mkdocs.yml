@@ -1,0 +1,9 @@
+site_name: PAC2 Documentació
+
+nav:
+    - Inici: index.md
+    - Referències: about.md 
+
+theme: material
+extra:
+  generator: false

@@ -1,0 +1,30 @@
+- name: Install Helm
+  hosts: controlplane
+  tasks:
+    - name: Download Helm binary
+      get_url:
+        url: https://get.helm.sh/helm-v3.13.1-linux-amd64.tar.gz
+        dest: /home/{{ ansible_user }}/helm.tar.gz
+
+    - name: Extract Helm binary
+      ansible.builtin.unarchive:
+        src: /home/{{ ansible_user }}/helm.tar.gz
+        dest: /home/{{ ansible_user }}/
+        remote_src: yes
+      become: yes
+
+    - name: Move Helm binary to /usr/local/bin
+      command: mv linux-amd64/helm /usr/local/bin/helm
+      become: yes
+
+    - name: Delete linux-amd64 folder and helm.tar.gz
+      file:
+        path: /home/{{ ansible_user }}/linux-amd64
+        state: absent
+      become: yes
+
+    - name: Delete helm.tar.gz
+      file:
+        path: /home/{{ ansible_user }}/helm.tar.gz
+        state: absent
+      become: yes

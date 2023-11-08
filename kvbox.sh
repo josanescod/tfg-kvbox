@@ -30,8 +30,7 @@ remove_lab() {
                 rm "$file"
             fi
         done
-        rm -Rf ./ansible
-        rm -Rf ./yaml
+        rm -Rf ./ansible ./yaml ./mkdocs
         vagrant destroy -f
         cd .. 
         cd ..        
@@ -78,6 +77,7 @@ main(){
         cp ".env" "labs/$lab_name/"
         cp -r "ansible" "labs/$lab_name/"
         cp -r "yaml" "labs/$lab_name/"
+        cp -r "mkdocs" "labs/$lab_name/"
         echo "$lab_name" > lab.txt
         cd "labs/$lab_name"   
         echo "Running $vagrant_file"
