@@ -1,9 +1,12 @@
-site_name: PAC2 Documentació
+site_name: Proves tfg-kubernetes
 
 nav:
     - Inici: index.md
-    - Referències: about.md 
-
+    - Proves realitzades:
+        - k3s: tests/k3s.md
+        - k0s: tests/k0s.md
+    - Referències: references.md
+         
 theme: material
 extra:
   generator: false
