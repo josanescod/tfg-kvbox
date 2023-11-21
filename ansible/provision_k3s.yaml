@@ -16,7 +16,7 @@
     - name: Configure kubectl alias
       lineinfile:
         path: "{{ ansible_env.HOME }}/.bashrc" 
-        line: "alias kubectl='k3s kubectl --'"          
+        line: "alias kubectl='k3s kubectl'"          
         insertafter: EOF
       when: ansible_user != 'root'
       become: yes
