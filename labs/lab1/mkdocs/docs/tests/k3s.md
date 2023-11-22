@@ -1,13 +1,18 @@
 # Desplegament d'un clúster de Kubernetes amb K3s
 
-Vídeo a la prova realitzada: <a href="https://youtu.be/l4vhvikY33o" target="_blank">Desplegament d'un servei web en un entorn local amb K3s</a>
+Video a la prova realitzada: <a href="https://youtu.be/l4vhvikY33o" target="_blank">Desplegament d'un servei web en un entorn local amb K3s</a>
 
 ## Objectiu
 
-![](../img/demo1.png)
+![](../img/mkdocs_service.png)
 
-L'objectiu és crear una pàgina de documentació de prova, generada amb MKDocs, afegir-la a un contenidor, i configurar un fitxer manifest de kubernetes per
+L'objectiu és crear una pàgina de documentació de prova generada amb MKDocs, afegir-la a un contenidor, i configurar un fitxer manifest de kubernetes per
 desplegar un pod i un servei de tipos NodePort dins d'un cúster de K3s.
+
+## Requisits
+
+- Docker
+- Cluster de Kubernetes
 
 ## Creació de l'estructura de fitxers amb el contenidor squidfunk/mkdocs-material
 

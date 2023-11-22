@@ -1,6 +1,7 @@
 # Proves amb orquestradors de contenidors
 
-Repositori del projecte: <a href="https://github.com/josanescod/tfg-kvbox" target="_blank">https://github.com/josanescod/tfg-kvbox</a>
+Repositori del projecte: [https://github.com/josanescod/tfg-kvbox](https://github.com/josanescod/tfg-kvbox)
+
 
 
 ## Distribució de Kubernetes
@@ -8,6 +9,6 @@ Repositori del projecte: <a href="https://github.com/josanescod/tfg-kvbox" targe
 Enllaços a les diferents proves realitzades en un entorn local, amb distribucions de kubernetes.
 
 - [k3s](tests/k3s.md)
-- [minikube](tests/minikube.md)
+- [k0s](tests/k0s.md)
 
 ---

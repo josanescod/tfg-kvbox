@@ -1,0 +1,99 @@
+- name: Install Kubernetes
+  hosts: controlplane worker1
+  become: true
+  tasks:
+    - name: disable swap
+      command: swapoff -a
+
+    - name: Comment out swap entry in /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        regexp: '^(\s*[^#].*\sswap\s.*)$'
+        line: '#\1'
+
+    - name: Load kernel modules for containerd
+      blockinfile:
+        path: /etc/modules-load.d/containerd.conf
+        create: yes
+        block: |
+          overlay
+          br_netfilter
+
+    - name: Load overlay kernel module
+      command: modprobe overlay
+
+    - name: Load br_netfilter kernel module
+      command: modprobe br_netfilter
+
+    - name: Configure sysctl for Kubernetes
+      blockinfile:
+        path: /etc/sysctl.d/kubernetes.conf
+        create: yes
+        block: |
+          net.bridge.bridge-nf-call-ip6tables = 1
+          net.bridge.bridge-nf-call-iptables = 1
+          net.ipv4.ip_forward = 1
+
+    - name: Apply sysctl changes
+      command: sysctl --system
+
+    - name: Install required packages
+      apt:
+        name:
+          - curl
+          - gnupg2
+          - gpg
+          - software-properties-common
+          - apt-transport-https
+          - ca-certificates
+        state: present
+
+    - name: Enable Docker repository
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/trusted.gpg.d/docker.gpg
+
+    - name: Import Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install containerd.io
+      apt:
+        name: containerd.io
+        state: present
+
+    - name: Configure containerd to use systemd as cgroup
+      command: "containerd config default | tee /etc/containerd/config.toml >/dev/null 2>&1"
+      changed_when: false  # Avoid marking the task as changed even if it doesn't make any changes
+
+    - name: Update containerd config to use systemd
+      replace:
+        path: /etc/containerd/config.toml
+        regexp: 'SystemdCgroup = false'
+        replace: 'SystemdCgroup = true'
+
+    - name: Restart containerd service
+      systemd:
+        name: containerd
+        state: restarted
+        enabled: yes
+
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+
+    - name: Transfer script kubeadm
+      copy:
+        src: ./kubeadm.sh
+        dest: /home/vagrant/kubeadm.sh
+        mode: '0755'  
+
+    - name: Execute kubeadm script
+      script: /home/vagrant/kubeadm.sh
+      become: true

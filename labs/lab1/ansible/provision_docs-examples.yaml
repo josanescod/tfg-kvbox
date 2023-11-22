@@ -1,0 +1,20 @@
+- name: Copy YAML directory to remote machine
+  hosts: controlplane, worker1 
+  become: yes  
+
+  tasks:
+    - name: Copy the 'yaml' directory to the remote machine
+      copy:
+        src: ../yaml
+        dest: /home/vagrant/
+        owner: vagrant
+        group: vagrant
+        mode: 0755
+    
+    - name: Copy the 'mkdocs' directory to the remote machine
+      copy:
+        src: ../mkdocs
+        dest: /home/vagrant/
+        owner: vagrant
+        group: vagrant
+        mode: 0755

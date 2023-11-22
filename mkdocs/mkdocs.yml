@@ -1,12 +1,22 @@
-site_name: Proves tfg-kubernetes
+site_name: tfg-kubernetes
 
 nav:
     - Inici: index.md
     - Proves realitzades:
         - k3s: tests/k3s.md
-        - k0s: tests/k0s.md
+        - minikube: tests/minikube.md
     - Referències: references.md
          
-theme: material
+theme: 
+  name: material
+  icon:
+    #logo: material/test-tube
+    logo: material/kubernetes
+  custom_dir: docs/assets/images
+   
 extra:
-  generator: false
+  generator: false  
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/josanescod/tfg-kvbox
+ 

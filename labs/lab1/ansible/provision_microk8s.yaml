@@ -1,0 +1,16 @@
+- name: Install MicroK8s via Snap
+  hosts: all  
+  become: yes
+  tasks:
+   
+    - name: Install MicroK8s via Snap
+      community.general.snap:
+        name: microk8s
+        classic: yes
+
+    - name: Add user vagrant to the microk8s group
+      user:
+        name: vagrant
+        groups: microk8s
+        append: yes
+
