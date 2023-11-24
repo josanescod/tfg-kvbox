@@ -34,3 +34,11 @@
       
     - name: Move Kind binary to /usr/local/bin
       command: mv /root/go/bin/kind /usr/local/bin/
+
+    - name: Install kubectl
+      get_url:
+        url: "https://dl.k8s.io/release/{{ lookup('url', 'https://dl.k8s.io/release/stable.txt') }}/bin/linux/amd64/kubectl"
+        dest: "/usr/local/bin/kubectl"
+        mode: '0755'
+
+       
