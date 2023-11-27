@@ -18,7 +18,7 @@
   - name: Download Sealed Secrets controller.yaml
     get_url:
       url: https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.18.1/controller.yaml
-      dest: "/home/{{ ansible_user }}/controller.yaml"
+      dest: "/home/{{ ansible_user }}/Sealed-Secrets-Controller.yaml"
 
   - name: Print message to console
     shell: "echo 'INFO: execute kubectl apply -f controller.yaml in your k8s cluster'"

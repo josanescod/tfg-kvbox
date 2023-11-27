@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: my-job
+spec:
+  template:
+    metadata:
+      name: my-job
+    spec:
+      containers:
+      - name: containerjob
+        image: alpine
+        command:
+        - "/bin/sh"
+        - "-c"
+        args:
+        - |
+          apk --no-cache add ca-certificates curl jq
+          update-ca-certificates
+          curl -H "Accept: application/json" https://swapi.dev/api/people/?search=yoda | jq '.results[] | { name, homeworld, species }'
+      restartPolicy: Never
