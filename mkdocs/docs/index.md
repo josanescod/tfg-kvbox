@@ -7,7 +7,16 @@ Repositori del projecte: <a href="https://github.com/josanescod/tfg-kvbox" targe
 
 Enllaços a les diferents proves realitzades en un entorn local, amb distribucions de kubernetes.
 
-- [k3s](tests/k3s.md)
+
 - [minikube](tests/minikube.md)
+- [k3s](tests/k3s.md)
+- [kind](tests/kind.md)
 
 ---
+
+## Conceptes bàsics de la API de kubernetes
+
+- [workload](basic_concepts/workloads.md)
+- [services_ingress](basic_concepts/services_ingress.md)
+- [configuration](basic_concepts/configurations.md)
+- [volumes](basic_concepts/volumes.md)

@@ -1,6 +1,6 @@
 # Desplegament d'un clúster de Kubernetes amb Minikube
 
-Video a la prova realitzada: <a href="" target="_blank">Proves amb minikube: deployment, autoescaling, rollout. </a>
+Video a la prova realitzada: <a href="https://youtu.be/U6eXTDGd9gY" target="_blank">Proves amb minikube: deployment, autoescaling, rollout. </a>
 
 ## Objectiu
 
