@@ -1,6 +1,6 @@
 # Desplegament d'un clúster de Kubernetes amb Kind
 
-Vídeo a la prova realitzada: <a href="" target="_blank">Desplegament d'un servei web en un entorn local amb Kind</a>
+Vídeo a la prova realitzada: <a href="https://youtu.be/BdYJnmdHUS4" target="_blank">Desplegament d'un clúster de kubernetes amb Kind, en un entorn local.</a>
 
 ## Objectiu
 
