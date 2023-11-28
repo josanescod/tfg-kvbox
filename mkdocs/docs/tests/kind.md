@@ -158,7 +158,7 @@ Es poden crear aplicant kubectl apply -f configmap.yaml (mode declaratiu) o bé 
 
 ## Secret
 
-Un Secret és
+Un Secret és un objecte de Kubernetes que s'utilitza per emmagatzemar informació confidencial, com contrasenyes o tokens d'una API. Es poden referenciar els seus valors com a variables d'entorn o bé muntar els seus valors en volums.
 
 Es pot codificar/decodificar:
 
@@ -167,7 +167,7 @@ echo -n "Tyrion" | base64
 echo -n "VHlyaW9u" | base64 --decode
 
 ```
-Cal destacar que no és una manera d'encriptar dades crítiques, s'utilitza més aviat per ofuscar la informació, representar dades en un conjunt estàndard de dades,
+És important destacar, que no és una manera d'encriptar dades crítiques, s'utilitza més aviat per ofuscar la informació, representar dades en un conjunt estàndard de caràcters,
 permetre incloure dades binàries o sensibles directament als manifests i és una manera estandarditzada de compartir informació, però es recomana afegir capes de seguretat
 per a dades delicades.
 
@@ -198,7 +198,7 @@ metadata:
   name: my-pod
 spec:
   containers:
-  - name: container1
+  - name: nginx
     image: nginx:alpine
     envFrom:    
     - secretRef:
@@ -219,11 +219,11 @@ apiVersion: v1
 kind: Secret
 metadata:
   creationTimestamp: null
-  name: my-secret
+  name: my-secret-2
   namespace: default
 data:
-  password: ZWxkZXNlbXByZQ==  # base64 encoded ladesempre
-  username: MTIzNDU=          # base64 encoded 12345
+  password: ZWxkZXNlbXByZQ==
+  username: MTIzNDU=
 ```
 
 Obtenim la clau pública del certificat
@@ -245,7 +245,7 @@ apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
   creationTimestamp: null
-  name: my-secret-test
+  name: my-secret-2
   namespace: default
 spec:
   encryptedData:
