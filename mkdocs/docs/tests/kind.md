@@ -23,6 +23,9 @@ nodes:
 - role: control-plane
 - role: worker
 - role: worker
+  extraPortMappings:
+  - containerPort: 30000
+    hostPort: 7000
 ```
 
 kind create cluster --config kind-example-config.yaml
