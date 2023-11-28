@@ -12,14 +12,8 @@ spec:
     envFrom:
     - configMapRef:
         name: my-configmap
-        # - secretRef:
-        #     name: secret2
-        # - secretRef:
-        #     name: secret3
-        # - secretRef:
-        #     name: secret4
-    # - secretRef:
-    #     name: my-secret-test
+    - secretRef:
+        name: my-secret-test
   volumes:
   - name: config-volume
     configMap:

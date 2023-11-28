@@ -8,6 +8,6 @@
   * [Kind](https://kind.sigs.k8s.io/){:target="_blank"}
   * [Minikube](https://minikube.sigs.k8s.io/docs/start/){:target="_blank"}
   * [MKDocs](https://www.mkdocs.org/){:target="_blank"}
-  * [squidfunk/mkdocs-material](https://hub.docker.com/r/squidfunk/mkdocs-material/){:target="_blank"}
   * [Práctica: MkDocs. Implantación de Aplicaciones Web](https://josejuansanchez.org/iaw/practica-mkdocs/index.html#crear-un-nuevo-proyecto-comando-new){:target="_blank"}
+  * [squidfunk/mkdocs-material](https://hub.docker.com/r/squidfunk/mkdocs-material/){:target="_blank"}
   
