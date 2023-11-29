@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphsolver-deployment
+  labels:
+    app: graphsolver-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: graphsolver-app
+  template:
+    metadata:
+      labels:
+        app: graphsolver-app
+    spec:
+      containers:
+      - name: graphsolver-container
+        image: josanescod/graph-solver:1.0
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graphsolver-service
+spec:
+  selector:
+    app: graphsolver-app
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 80
+    nodePort: 30001
+  type: NodePort

@@ -3,6 +3,7 @@ site_name: tfg-kubernetes
 nav:
 - Inici: index.md
 - Proves realitzades:
+  - microk8s: tests/microk8s.md
   - minikube: tests/minikube.md
   - k3s: tests/k3s.md
   - kind: tests/kind.md
@@ -19,6 +20,18 @@ theme:
     #logo: material/test-tube
     logo: material/kubernetes
   custom_dir: docs/assets/images
+
+  palette:
+  # Palette toggle for light mode
+  - scheme: default
+    toggle:
+      icon: material/brightness-7
+      name: Switch to dark mode
+  # Palette toggle for dark mode
+  - scheme: slate
+    toggle:
+      icon: material/brightness-4
+      name: Switch to light mode
 
 extra:
   generator: false

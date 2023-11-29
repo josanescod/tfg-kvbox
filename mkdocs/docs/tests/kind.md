@@ -1,6 +1,6 @@
 # Desplegament d'un clúster de Kubernetes amb Kind
 
-Vídeo a la prova realitzada: <a href="https://youtu.be/BdYJnmdHUS4" target="_blank">Desplegament d'un clúster de kubernetes amb Kind, en un entorn local.</a>
+Vídeo a la prova realitzada: <a href="https://youtu.be/BdYJnmdHUS4" target="_blank">Proves amb kind: daemonset, job, cronjob, configmap i secrets.</a>
 
 ## Objectiu
 
