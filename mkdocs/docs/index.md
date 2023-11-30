@@ -9,6 +9,7 @@ Enllaços a les diferents proves realitzades en un entorn local, amb distribucio
 
 - [microk8s](tests/microk8s.md)
 - [minikube](tests/minikube.md)
+- [k0s](tests/k0s.md)
 - [k3s](tests/k3s.md)
 - [kind](tests/kind.md)
 
