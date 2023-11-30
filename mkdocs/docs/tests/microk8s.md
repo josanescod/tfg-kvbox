@@ -1,6 +1,6 @@
 # Desplegament d'un clúster de Kubernetes amb MicroK8s
 
-Video a la prova realitzada: <a href="" target="_blank">Proves amb microk8s: statefulset i el gesto de paquets Helm </a>
+Video a la prova realitzada: <a href="https://youtu.be/Ty4d6KXcMoc" target="_blank">Proves amb microk8s: statefulset i el gestor de paquets Helm </a>
 
 ## Objectiu
 
