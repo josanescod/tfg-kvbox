@@ -8,9 +8,11 @@
   * [K0s](https://k0sproject.io/){:target="_blank"}
   * [K3s](https://docs.k3s.io/){:target="_blank"}
   * [Kind](https://kind.sigs.k8s.io/){:target="_blank"}
+  * [Kubernetes/ingress-nginx](https://kubernetes.github.io/ingress-nginx/){:target="_blank"}
   * [Microk8s](https://microk8s.io/docs){:target="_blank"}
   * [Minikube](https://minikube.sigs.k8s.io/docs/start/){:target="_blank"}
   * [MKDocs](https://www.mkdocs.org/){:target="_blank"}
+  * [NGINX Docs](https://docs.nginx.com/nginx-ingress-controller/){:target="_blank"}  
   * [Práctica: MkDocs. Implantación de Aplicaciones Web](https://josejuansanchez.org/iaw/practica-mkdocs/index.html#crear-un-nuevo-proyecto-comando-new){:target="_blank"}
   * [squidfunk/mkdocs-material](https://hub.docker.com/r/squidfunk/mkdocs-material/){:target="_blank"}
   

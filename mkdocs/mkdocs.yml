@@ -1,4 +1,4 @@
-site_name: tfg-kubernetes
+site_name: test-kubernetes
 
 nav:
 - Inici: index.md
@@ -18,8 +18,8 @@ nav:
 theme:
   name: material
   icon:
-    #logo: material/test-tube
-    logo: material/kubernetes
+    logo: material/test-tube
+    #logo: material/kubernetes
   custom_dir: docs/assets/images
 
   palette:
@@ -45,3 +45,4 @@ extra_css:
 
 markdown_extensions:
 - pymdownx.extra
+
