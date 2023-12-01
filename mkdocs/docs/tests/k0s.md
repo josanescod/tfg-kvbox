@@ -1,6 +1,6 @@
 # Desplegament d'un clúster de Kubernetes amb k0s
 
-Vídeo a la prova realitzada: <a href="" target="_blank">Desplegament d'un clúster de Kubernetes amb k0s en un entorn local</a>
+Vídeo a la prova realitzada: <a href="https://youtu.be/ePlCy-gs0L4" target="_blank">Desplegament d'un clúster de Kubernetes amb k0s en un entorn local</a>
 
 ## Objectiu
 
