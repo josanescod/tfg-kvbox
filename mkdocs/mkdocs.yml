@@ -2,25 +2,25 @@ site_name: test-kubernetes
 
 nav:
 - Inici: index.md
-- Proves realitzades:
-  - microk8s: tests/microk8s.md
-  - minikube: tests/minikube.md
-  - k0s: tests/k0s.md
-  - k3s: tests/k3s.md
-  - kind: tests/kind.md
-- Recursos de la API de k8s:
-  - workloads: basic_concepts/workloads
-  - serveis-ingress: basic_concepts/services_ingress
-  - configuracions: basic_concepts/configurations
-  - volums: basic_concepts/volumes
+- Proves en entorn local:
+  - microk8s: local_test/microk8s.md
+  - minikube: local_test/minikube.md
+  - k0s: local_test/k0s.md
+  - k3s: local_test/k3s.md
+  - kind: local_test/kind.md
+  - kubeadm: local_test/kubeadm.md
+- Proves en entorn remot:
+  - vps1: remote_test/vps1
+  - vps2: remote_test/vps2
 - Referències: references.md
 
 theme:
   name: material
   icon:
     logo: material/test-tube
-    #logo: material/kubernetes
   custom_dir: docs/assets/images
+  features:
+  - navigation.top
 
   palette:
   # Palette toggle for light mode

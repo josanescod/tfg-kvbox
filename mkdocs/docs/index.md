@@ -3,21 +3,18 @@
 Repositori del projecte: <a href="https://github.com/josanescod/tfg-kvbox" target="_blank">https://github.com/josanescod/tfg-kvbox</a>
 
 
-## Distribució de Kubernetes
+## Distribucions de Kubernetes utilitzades i proves:
 
-Enllaços a les diferents proves realitzades en un entorn local, amb distribucions de kubernetes.
+### Proves realitzades en un entorn local.
 
-- [microk8s](tests/microk8s.md)
-- [minikube](tests/minikube.md)
-- [k0s](tests/k0s.md)
-- [k3s](tests/k3s.md)
-- [kind](tests/kind.md)
+- [microk8s](local_test/microk8s.md)
+- [minikube](local_test/minikube.md)
+- [k0s](local_test/k0s.md)
+- [k3s](local_test/k3s.md)
+- [kind](local_test/kind.md)
+- [kubeadm](local_test/kubeadm.md)
 
----
+### Proves realitzades en un entorn remot.
 
-## Conceptes bàsics de la API de kubernetes
-
-- [workload](basic_concepts/workloads.md)
-- [services_ingress](basic_concepts/services_ingress.md)
-- [configuration](basic_concepts/configurations.md)
-- [volumes](basic_concepts/volumes.md)
+- [vps1](remote_test/vps1.md)
+- [vps2](remote_test/vps2.md)
