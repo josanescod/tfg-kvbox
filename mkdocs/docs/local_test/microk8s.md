@@ -116,6 +116,7 @@ Helm també permet crear charts propis a partir de fitxers manifests, que despr�
 Els passos a seguir són:
 
 * Creació d'una carpeta per al projecte
+
 ```
 mkdir my-chart
 ```
@@ -126,7 +127,7 @@ mkdir my-chart
 helm create graph-solver
 ```
 
-* L'estructura de carpetes resultant és la següent:
+* L' estructura de carpetes resultant és la següent:
 
 carpeta chart: és on anirien els charts dels que depengués el nostre Chart, es pot deixar igual.
 
