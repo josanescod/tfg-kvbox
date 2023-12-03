@@ -728,9 +728,9 @@
 
 
 <h1 id="desplegament-dun-cluster-de-kubernetes-amb-kubeadm">Desplegament d'un clúster de Kubernetes amb kubeadm</h1>
-<p>Vídeo a la prova realitzada: <a href="" target="_blank">Desplegament d'un clúster de Kubernetes amb kubeadm en un entorn local</a></p>
+<p>Vídeo a la prova realitzada: <a href="" target="_blank">Desplegament d'un clúster de Kubernetes amb kubeadm</a></p>
 <h2 id="objectiu">Objectiu</h2>
-<p><img alt="" src="../img/" /></p>
+<p><img alt="" src="../../img/demo6.png" /></p>
 <p>Desplegar un clúster de Kubernetes amb kubeadm i practicar els conceptes metalLoadBalancer, Nginx Ingress Controller.</p>
 <h2 id="installacio-pas-a-pas-de-kubernetes-amb-kubeadm">Instal·lació pas a pas de kubernetes amb kubeadm</h2>
 <h3 id="controlplane">Controlplane</h3>
@@ -808,18 +808,18 @@ networking:
 <div class="highlight"><pre><span></span><code>kubeadm init --config=kubeadm-config.yaml --upload-certs | tee kubeadm-init.out
 </code></pre></div>
 <p>Logout root i configurar l'usuari com administrado del clúster</p>
-<div class="highlight"><pre><span></span><code>logout
+<div class="highlight"><pre><span></span><code>exit
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-less .kube/config
+less $HOME/.kube/config
 </code></pre></div>
 <p>Instal·lar el gestor de paquets Helm</p>
 <div class="highlight"><pre><span></span><code>wget https://get.helm.sh/helm-v3.13.2-linux-amd64.tar.gz
 tar -zxvf helm-v3.13.2-linux-amd64.tar.gz
 mv linux-amd64/helm /usr/local/bin/helm
 </code></pre></div>
-<p>Seleccionar un pod de xarxa per al CNI (Container Networkin Interface) hi ha diversos, Cilium o Calico són bastant populars.</p>
+<p>Seleccionar un pod de xarxa per al CNI (Container Networking Interface) hi ha diversos, Cilium o Calico són bastant populars.</p>
 <div class="highlight"><pre><span></span><code>helm repo add cilium https://helm.cilium.io/
 helm repo update
 helm template cilium cilium/cilium --namespace kube-system &gt; cilium.yaml

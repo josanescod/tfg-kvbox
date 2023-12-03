@@ -1,10 +1,10 @@
 # Desplegament d'un clúster de Kubernetes amb kubeadm
 
-Vídeo a la prova realitzada: <a href="" target="_blank">Desplegament d'un clúster de Kubernetes amb kubeadm en un entorn local</a>
+Vídeo a la prova realitzada: <a href="" target="_blank">Desplegament d'un clúster de Kubernetes amb kubeadm</a>
 
 ## Objectiu
 
-![](../img/)
+![](../img/demo6.png)
 
 Desplegar un clúster de Kubernetes amb kubeadm i practicar els conceptes metalLoadBalancer, Nginx Ingress Controller.
 
@@ -137,11 +137,11 @@ kubeadm init --config=kubeadm-config.yaml --upload-certs | tee kubeadm-init.out
 Logout root i configurar l'usuari com administrado del clúster
 
 ```
-logout
+exit
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-less .kube/config
+less $HOME/.kube/config
 ```
 
 Instal·lar el gestor de paquets Helm
@@ -152,7 +152,7 @@ tar -zxvf helm-v3.13.2-linux-amd64.tar.gz
 mv linux-amd64/helm /usr/local/bin/helm
 ```
 
-Seleccionar un pod de xarxa per al CNI (Container Networkin Interface) hi ha diversos, Cilium o Calico són bastant populars.
+Seleccionar un pod de xarxa per al CNI (Container Networking Interface) hi ha diversos, Cilium o Calico són bastant populars.
 
 ```
 helm repo add cilium https://helm.cilium.io/
