@@ -480,33 +480,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#metallb-loadbalancer" class="md-nav__link">
-    <span class="md-ellipsis">
-      MetalLB (loadbalancer)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#nginx-ingress-controller" class="md-nav__link">
-    <span class="md-ellipsis">
-      Nginx Ingress Controller
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#desplegar-una-aplicacio-de-prova" class="md-nav__link">
-    <span class="md-ellipsis">
-      Desplegar una aplicació de prova
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -697,33 +670,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#metallb-loadbalancer" class="md-nav__link">
-    <span class="md-ellipsis">
-      MetalLB (loadbalancer)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#nginx-ingress-controller" class="md-nav__link">
-    <span class="md-ellipsis">
-      Nginx Ingress Controller
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#desplegar-una-aplicacio-de-prova" class="md-nav__link">
-    <span class="md-ellipsis">
-      Desplegar una aplicació de prova
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -740,10 +686,10 @@
 
 
 <h1 id="desplegament-dun-cluster-de-kubernetes-amb-kubeadm">Desplegament d'un clúster de Kubernetes amb kubeadm</h1>
-<p>Vídeo a la prova realitzada: <a href="" target="_blank">Desplegament d'un clúster de Kubernetes amb kubeadm</a></p>
+<p>Vídeo a la prova realitzada: <a href="https://youtu.be/wE5VCjDbP34" target="_blank">Desplegament d'un clúster de Kubernetes amb kubeadm</a></p>
 <h2 id="objectiu">Objectiu</h2>
 <p><img alt="" src="../../img/demo6.png" /></p>
-<p>Desplegar un clúster de Kubernetes amb kubeadm i practicar els conceptes metalLoadBalancer, Nginx Ingress Controller.</p>
+<p>Desplegar un clúster de Kubernetes amb kubeadm.</p>
 <h2 id="installacio-pas-a-pas-de-kubernetes-amb-kubeadm">Instal·lació pas a pas de kubernetes amb kubeadm</h2>
 <h3 id="controlplane">Controlplane</h3>
 <p>Mode root</p>
@@ -938,164 +884,6 @@ runtime-endpoint=unix:///run/containerd/containerd.sock \
 
 sudo cat /etc/crictl.yaml
 </code></pre></div>
-<h2 id="metallb-loadbalancer">MetalLB (loadbalancer)</h2>
-<p>Verificar si kube-proxy es troba en mode IPVS</p>
-<div class="highlight"><pre><span></span><code>kubectl get configmap kube-proxy -n kube-system -o yaml
-</code></pre></div>
-<p>En cas afirmatiu afegir la següent configuració afegir strictARP: true</p>
-<div class="highlight"><pre><span></span><code>kubectl edit configmap -n kube-system kube-proxyapiVersion: kubeproxy.config.k8s.io/v1alpha1
-kind: KubeProxyConfiguration
-mode: &quot;ipvs&quot;
-ipvs:
-  strictARP: true
-</code></pre></div>
-<p>Instal·lar MetalLB</p>
-<div class="highlight"><pre><span></span><code>kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
-</code></pre></div>
-<p>Crear el fitxer de configuració amb el pool d'adreces</p>
-<div class="highlight"><pre><span></span><code>apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
-metadata:
-  name: first-pool
-  namespace: metallb-system
-spec:
-  addresses:
-  - 172.16.2.240-172.16.2.250
-  autoAssign: true
----
-apiVersion: metallb.io/v1beta1
-kind: L2Advertisement
-metadata:
-  name: default
-  namespace: metallb-system
-spec:
-  ipAddressPools:
-  - default
-</code></pre></div>
-<p>k apply -f metallb-config.yaml</p>
-<h2 id="nginx-ingress-controller">Nginx Ingress Controller</h2>
-<p>Instal.lació Nginx Ingress Controller</p>
-<div class="highlight"><pre><span></span><code>kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
-</code></pre></div>
-<p>Ingress-nginx service hauria de ser de tipus LoadBalancer, tenir EXTERNAL-IP i estar disponible fora del clúster.</p>
-<div class="highlight"><pre><span></span><code>kubectl -n ingress-nginx get svc
-
-curl -D- http://172.16.2.250 -H &#39;Host: myapp.example.com&#39;
-</code></pre></div>
-<h2 id="desplegar-una-aplicacio-de-prova">Desplegar una aplicació de prova</h2>
-<p>ConfigMap</p>
-<div class="highlight"><pre><span></span><code>apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: my-configmap
-data:
-  index.html: |
-    &lt;!DOCTYPE html&gt;
-    &lt;html&gt;
-    &lt;head&gt;
-      &lt;title&gt;My HTML Page&lt;/title&gt;
-    &lt;/head&gt;
-    &lt;body&gt;
-      &lt;h1&gt;Test Ingress Nginx amb External-IP&lt;/h1&gt;
-      &lt;p&gt;Funciona correctament.&lt;/p&gt;
-    &lt;/body&gt;
-    &lt;/html&gt;
-</code></pre></div>
-<p>Deployment</p>
-<div class="highlight"><pre><span></span><code>apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: my-app
-  template:
-    metadata:
-      labels:
-        app: my-app
-    spec:
-      containers:
-      - name: nginx
-        image: nginx:alpine
-        ports:
-        - containerPort: 80
-        volumeMounts:
-        - name: config-volume
-          mountPath: /usr/share/nginx/html
-      volumes:
-      - name: config-volume
-        configMap:
-          name: my-configmap
-          items:
-          - key: index.html
-            path: index.html
-</code></pre></div>
-<p>Service</p>
-<div class="highlight"><pre><span></span><code>apiVersion: v1
-kind: Service
-metadata:
-  name: nginx-service
-spec:
-  selector:
-    app: my-app
-  ports:
-  - protocol: TCP
-    port: 5000
-    targetPort: 80
-</code></pre></div>
-<p>Ingress</p>
-<div class="highlight"><pre><span></span><code>apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations: {}
-  name: nginx-server-ingress
-
-spec:
-  ingressClassName: nginx
-  rules:
-  - host: app1.cluster.test
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: nginx-service
-            port:
-              number: 5000
-</code></pre></div>
-<p>k apply -f test-configmap.yaml -f test-deployment.yaml -f test-service.yaml -f test-ingress yaml</p>
-<p>A la màquina client editar /etc/hosts amb la ip externa de Nginx Ingress Controller proporcionada per MetalLB i el nom del host
-que s'ha configurat a la regla Ingress.</p>
-<div class="highlight"><pre><span></span><code># /etc/hosts
-EXTERNAL-IP app1.cluster.test
-</code></pre></div>
-<p>Realitzar una petició al servei</p>
-<div class="highlight"><pre><span></span><code>curl -D- http://EXTERNAL-IP -H &#39;Host: app1.cluster.test&#39;
-</code></pre></div>
-<p><font color="c43434">Avís:</font> </p>
-<p>Quan s'executa la instrucció curl des d'una xarxa diferent de la del clúster, no funciona.</p>
-<p>Possibles causes:</p>
-<ul>
-<li>
-<p>configuració errònia de MetalLB, en aquest tutorial l'he deixat per defecte, treballant en Capa 2 i és possible que hagués de treballar en Capa 3 amb el protocol BGP, però això, suposaria configurar la màquina virtual de l'encaminador perquè treballés amb aquest protocol i es troba fora de l'àmbit de les proves.</p>
-</li>
-<li>
-<p>Problema de polítiques o de configuració de Cilium.</p>
-</li>
-</ul>
-<p>Proves realitzades:</p>
-<ul>
-<li>Comprovar la connectivitat entre xarxes, que aparentment és correcta.</li>
-<li>Provar amb una altra distribució (k0s) que té un altre CNI</li>
-<li>Assignar el rang del pool d'external-ip a les del node que té el servei (172.16.3.x)</li>
-<li>Crear un contenidor a la mateixa xarxa del loadbalancer (172.16.3.x) i provar la comanda curl -D- <code>http://EXTERNAL-IP</code> -H 'Host: app1.cluster.test'</li>
-</ul>
-<p>De moment no he trobat la solució, crec que hauria d'aprofundir en la documentació de MetalLB i dels CNI, ja que alguns
-treballen per defecte amb BGP i inclús poden realitzar funcions similars a metalLB.</p>
-<p>És un tema que queda pendent.</p>
 
 
 
