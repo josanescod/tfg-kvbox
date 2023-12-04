@@ -514,3 +514,26 @@ Realitzar una petició al servei
 ```
 curl -D- http://EXTERNAL-IP -H 'Host: app1.cluster.test'
 ```
+
+<font color="c43434">Avís:</font> 
+
+Quan s'executa la instrucció curl des d'una xarxa diferent de la del clúster, no funciona.
+ 
+
+Possibles causes:
+
+* configuració errònia de MetalLB, en aquest tutorial l'he deixat per defecte, treballant en Capa 2 i és possible que hagués de treballar en Capa 3 amb el protocol BGP, però això, suposaria configurar la màquina virtual de l'encaminador perquè treballés amb aquest protocol i es troba fora de l'àmbit de les proves.
+
+* Problema de polítiques o de configuració de Cilium.
+
+Proves realitzades:
+
+* Comprovar la connectivitat entre xarxes, que aparentment és correcta.
+* Provar amb una altra distribució (k0s) que té un altre CNI
+* Assignar el rang del pool d'external-ip a les del node que té el servei (172.16.3.x)
+* Crear un contenidor a la mateixa xarxa del loadbalancer (172.16.3.x) i provar la comanda curl -D- `http://EXTERNAL-IP` -H 'Host: app1.cluster.test'
+
+De moment no he trobat la solució, crec que hauria d'aprofundir en la documentació de MetalLB i dels CNI, ja que alguns
+treballen per defecte amb BGP i inclús poden realitzar funcions similars a metalLB.
+
+És un tema que queda pendent.
