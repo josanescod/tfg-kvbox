@@ -268,7 +268,7 @@ Configurar els paquets perquè no s'actualitzin
 apt-mark hold kubelet kubeadm kubectl
 ```
 
-Afegir un DNS local al servidor controlplane
+Afegir un DNS local al servidor worker1
 
 ```
 # editar /etc/hosts

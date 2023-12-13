@@ -45,4 +45,6 @@ extra_css:
 
 markdown_extensions:
 - pymdownx.extra
+- toc:
+    title: Taula de continguts
 

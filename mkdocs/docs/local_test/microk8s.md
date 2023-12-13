@@ -109,7 +109,7 @@ helm install my-wordpress -f values.yaml bitnami/wordpress --version 18.1.19
 kubectl port-forward --address 0.0.0.0 service/my-wordpress 7000:8080
 ```
 
-### Creació d'un chart-Helm
+### Creació d'un Helm chart
 
 Helm també permet crear charts propis a partir de fitxers manifests, que després es poden compartir.
 
