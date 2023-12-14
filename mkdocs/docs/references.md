@@ -27,5 +27,7 @@
   * [Tutorial Kubernetes II | Desde los Volumenes o Ingress a los DaemonSets | formación 100% practico](https://www.youtube.com/watch?v=gPALJhVYMz0){:target="_blank"}
   * [Helm, el gestor de paquetes para Kubernetes: De 0 a empaquetar aplicaciones en un solo vídeo](https://www.youtube.com/watch?v=5-Qcig2_8xo){:target="_blank"}
   
-## Documentació d'altres eines utilitzades:
+## Altres eines utilitzades:
 
+* [Kail kubernetes tail](https://github.com/boz/kail){:target="_blank"}
+* [K9s](https://k9scli.io/){:target="_blank"}

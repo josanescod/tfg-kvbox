@@ -16,5 +16,5 @@ Repositori del projecte: <a href="https://github.com/josanescod/tfg-kvbox" targe
 
 ### Proves realitzades en un entorn remot.
 
-- [vps1](remote_test/vps1.md)
-- [vps2](remote_test/vps2.md)
+- [sd1](remote_test/sd1.md)
+- [sd2](remote_test/sd2.md)

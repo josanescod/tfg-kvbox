@@ -10,8 +10,8 @@ nav:
   - kind: local_test/kind.md
   - kubeadm: local_test/kubeadm.md
 - Proves en entorn remot:
-  - vps1: remote_test/vps1
-  - vps2: remote_test/vps2
+  - sd1: remote_test/sd1
+  - sd2: remote_test/sd2
 - Referències: references.md
 
 theme:

@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: repository
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: repository-app
+  template:
+    metadata:
+      labels:
+        app: repository-app
+    spec:
+      containers:
+        - name: gitea
+          image: gitea/gitea:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: USER_UID
+              value: "1000"
+            - name: USER_GID
+              value: "1000"
+            - name: ROOT_URL
+              value: "https://tudominio.com/"
+            - name: FORCE_REDIRECT_HTTPS
+              value: "true"
+            - name: HTTP_ADDR
+              value: "0.0.0.0"
+            - name: HTTP_PORT
+              value: "3000"
+            - name: PROTOCOL
+              value: "http"
+            - name: USE_PROXY_PROTOCOL
+              value: "false"
+            - name: PROXY_PROTOCOL_TLS_BRIDGING
+              value: "false"
+            - name: PROXY_PROTOCOL_HEADER_TIMEOUT
+              value: "5s"
+            - name: PROXY_PROTOCOL_ACCEPT_UNKNOWN
+              value: "false"
+            - name: DOMAIN
+              value: "tudominio.com"
+            - name: LFS_START_SERVER
+              value: "false"
+            - name: REDIRECT_OTHER_PORT
+              value: "false"
+            - name: PORT_TO_REDIRECT
+              value: "80"
+            - name: CERT_FILE
+              value: "/path/to/cert.pem"
+            - name: KEY_FILE
+              value: "/path/to/key.pem"
+            - name: ENABLE_ACME
+              value: "false"
+          volumeMounts:
+            - name: data-volume
+              mountPath: /data
+      volumes:
+        - name: data-volume
+          hostPath:
+            path: /home/josan/demo7/repo-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: repository-service
+spec:
+  selector:
+    app: repository-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+

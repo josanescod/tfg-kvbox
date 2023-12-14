@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docs 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docs-app 
+  template:
+    metadata:
+      labels:
+        app: docs-app 
+    spec:
+      containers:
+        - name: docuweb 
+          image: josanescod/docs:1.0 
+          ports:
+            - containerPort: 80            
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docs-service
+spec:
+  selector:
+    app: docs-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80 

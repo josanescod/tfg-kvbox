@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-tfg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: homer-app
+  template:
+    metadata:
+      labels:
+        app: homer-app
+    spec:
+      containers:
+        - name: homer-container
+          image: b4bz/homer:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: INIT_ASSETS
+              value: "1"
+          volumeMounts:
+            - mountPath: "/www/assets"
+              name: assets-volume
+      volumes:
+        - name: assets-volume
+          hostPath:
+            path: "/home/josan/demo7/homer/assets"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: k8s-tfg-service
+spec:
+  selector:
+    app: homer-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+

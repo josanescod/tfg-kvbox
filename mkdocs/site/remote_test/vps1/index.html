@@ -446,7 +446,7 @@
         
   
   <span class="md-ellipsis">
-    vps1
+    demo 1
   </span>
   
 
@@ -466,7 +466,7 @@
         
   
   <span class="md-ellipsis">
-    vps2
+    demo 2
   </span>
   
 
@@ -613,18 +613,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#opcional-configuracio-dun-servidor-reverse-proxy" class="md-nav__link">
+  <a href="#configuracio-dun-servidor-reverse-proxy" class="md-nav__link">
     <span class="md-ellipsis">
-      (Opcional Configuració d'un servidor reverse proxy)
+      Configuració d'un servidor reverse proxy
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#opcional-basic-auth" class="md-nav__link">
+  <a href="#basic-auth" class="md-nav__link">
     <span class="md-ellipsis">
-      (Opcional Basic Auth)
+      Basic Auth
     </span>
   </a>
   
@@ -640,9 +640,9 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#desplegament-de-tota-la-infraestructura-3-servidors-amb-terraform" class="md-nav__link">
+  <a href="#desplegament-amb-terraform" class="md-nav__link">
     <span class="md-ellipsis">
-      Desplegament de tota la infraestructura (3 servidors) amb Terraform
+      Desplegament amb Terraform
     </span>
   </a>
   
@@ -990,7 +990,7 @@ spec:
               number: 80
 </code></pre></div>
 <h3 id="desplegament-de-serveis">Desplegament de serveis</h3>
-<p>docs-deployment.yaml</p>
+<p>Exemple: docs-deployment.yaml</p>
 <div class="highlight"><pre><span></span><code>apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1023,43 +1023,6 @@ spec:
       port: 80
       targetPort: 80 
 </code></pre></div>
-<p>ollama-frontend-deployment</p>
-<div class="highlight"><pre><span></span><code>apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ollama-frontend
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ollama-frontend
-  template:
-    metadata:
-      labels:
-        app: ollama-frontend
-    spec:
-      containers:
-        - name: ollama-frontend
-          image: ghcr.io/ollama-webui/ollama-webui:main
-          env:
-            - name: OLLAMA_API_BASE_URL
-              value: &quot;http://ollama-backend-service/api&quot;
-          ports:
-            - containerPort: 8080            
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ollama-frontend-service
-spec:
-  selector:
-    app: ollama-frontend
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8080
-#     type: NodePort
-</code></pre></div>
 <h3 id="configuracio-dns">Configuració DNS</h3>
 <p>Opcionalment es pot configurar i apuntar subdominis a la ip de worker1</p>
 <p>Exemple:</p>
@@ -1071,20 +1034,96 @@ A     dashboard.cluster.test    ip-del-servidor
 </code></pre></div>
 <p>A partir d'aquí es podria anar al navegador i posar http://docs.cluster.test:nodeport i el cluster
 respondria a la petició.</p>
-<h3 id="opcional-configuracio-dun-servidor-reverse-proxy">(Opcional Configuració d'un servidor reverse proxy)</h3>
+<h3 id="configuracio-dun-servidor-reverse-proxy">Configuració d'un servidor reverse proxy</h3>
 <p>També es pot configurar un servidor proxy invers per actuar d'intermediari entre les peticions</p>
 <p>del client i el cluster i no tenir que posar el port al navegador. En aquest cas s'ha utilitzat <a href="https://caddyserver.com/" target="_blank">Caddy Server</a> </p>
 <p>per la simplicitat per realitzar la configuració. </p>
 <p>Instal·lació de Caddy</p>
-<div class="highlight"><pre><span></span><code>
+<div class="highlight"><pre><span></span><code>wget -P /tmp https://github.com/caddyserver/caddy/releases/download/v2.7.6/caddy_2.7.6_linux_amd64.tar.gz \
+&amp;&amp; sudo chmod +x /tmp/caddy_2.7.6_linux_amd64.tar.gz &amp;&amp; sudo tar -xzvf /tmp/caddy_2.7.6_linux_amd64.tar.gz \
+&amp;&amp; sudo mv caddy /usr/local/bin/
 </code></pre></div>
 <p>Cofiguració de Caddyfile</p>
+<div class="highlight"><pre><span></span><code>#/etc/caddy/Caddyfile
+docs.josanesc.com {
+    reverse_proxy ip_node:NodePort
+}
+
+repository.josanesc.com {
+    reverse_proxy ip_node:NodePort
+}
+
+chat-ai.josanesc.com {
+    reverse_proxy ip_node:NodePort
+}
+
+dashboard.josanesc.com {
+    reverse_proxy ip_node:NodePort
+}
+
+k8s-tfg.josanesc.com {
+    reverse_proxy ip_node:NodePort
+}
+</code></pre></div>
+<p>Crear un servei systemd per a caddy</p>
+<div class="highlight"><pre><span></span><code>sudo nano /lib/systemd/system/caddy.service
+
+[Unit]
+Description=Caddy
+Documentation=https://caddyserver.com/docs/
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+Type=notify
+User=caddy
+Group=caddy
+ExecStart=/usr/bin/caddy run --environ --config /etc/caddy/Caddyfile
+ExecReload=/usr/bin/caddy reload --config /etc/caddy/Caddyfile --force
+TimeoutStopSec=5s
+LimitNOFILE=1048576
+LimitNPROC=512
+PrivateTmp=true
+ProtectSystem=full
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+
+[Install]
+WantedBy=multi-user.target
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>sudo systemctl daemon-reload
+sudo systemctl enable caddy
+sudo systemctl start caddy
+sudo systemctl status caddy
+</code></pre></div>
+<h3 id="basic-auth">Basic Auth</h3>
 <div class="highlight"><pre><span></span><code>
 </code></pre></div>
-<h3 id="opcional-basic-auth">(Opcional Basic Auth)</h3>
 <h3 id="resultat-final">Resultat final</h3>
-<h3 id="desplegament-de-tota-la-infraestructura-3-servidors-amb-terraform">Desplegament de tota la infraestructura (3 servidors) amb Terraform</h3>
+<h3 id="desplegament-amb-terraform">Desplegament amb Terraform</h3>
 <h3 id="coses-pendents">Coses pendents</h3>
+<ol>
+<li>
+<p>Dashboard amb autenticació</p>
+</li>
+<li>
+<p>TIG (Telegraf, InfluxDB, Grafana) , Custom Self-Hosted Container Registry tipo Harbor</p>
+</li>
+<li>
+<p>Terraform per desplegar tot el cluster</p>
+</li>
+<li>
+<p>Desplegar un tercer node multiproveidor? </p>
+</li>
+<li>
+<p>Automatitzar totes les tasques possibles amb Ansible (Instal.lació de kubeadm als 2/3 nodes, aplicació dels manifests)</p>
+</li>
+<li>
+<p>Pasar-ho tot al repo i documentar.</p>
+</li>
+<li>
+<p>Memòria.</p>
+</li>
+</ol>
 
 
 
