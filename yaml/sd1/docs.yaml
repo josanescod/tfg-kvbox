@@ -15,6 +15,10 @@ spec:
       containers:
         - name: docuweb 
           image: josanescod/docs:1.0 
+          resources:
+            requests:
+              memory: 7Mi
+              cpu: 1m  
           ports:
             - containerPort: 80            
 ---

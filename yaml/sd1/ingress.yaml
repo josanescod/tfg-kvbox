@@ -48,4 +48,14 @@ spec:
             name: k8s-tfg-service
             port:
               number: 80
+  - host: dashboard.josanesc.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: skooner-service
+            port:
+              number: 80
 

@@ -15,6 +15,10 @@ spec:
       containers:
         - name: ollama-frontend
           image: ghcr.io/ollama-webui/ollama-webui:main
+          resources:
+            requests:
+              memory: 80Mi
+              cpu: 5m  
           env:
             - name: OLLAMA_API_BASE_URL
               value: "http://chat-ai-backend-service/api"

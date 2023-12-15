@@ -12,9 +12,14 @@ spec:
       labels:
         app: repository-app
     spec:
+      nodeName: worker1
       containers:
         - name: gitea
           image: gitea/gitea:latest
+          resources:
+            requests:
+              memory: 150Mi
+              cpu: 2m
           ports:
             - containerPort: 3000
           env:

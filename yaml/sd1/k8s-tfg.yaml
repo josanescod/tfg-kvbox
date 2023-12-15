@@ -12,9 +12,14 @@ spec:
       labels:
         app: homer-app
     spec:
+      nodeName: worker1
       containers:
         - name: homer-container
           image: b4bz/homer:latest
+          resources:
+            requests:
+              memory: 4Mi
+              cpu: 1m
           ports:
             - containerPort: 8080
           env:

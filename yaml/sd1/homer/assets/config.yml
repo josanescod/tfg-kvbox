@@ -67,8 +67,8 @@ services:
   icon: "fas fa-cloud"
   items:
   - name: "Dashboard"
-    logo: "assets/tools/kubernetes-dashboard.png"
-    subtitle: "Administració del clúster"
+    logo: "assets/tools/skooner.png"
+    subtitle: "Administració web"
     tag: "app"
     keywords: "self hosted reddit"
     url: "https://dashboard.josanesc.com"
