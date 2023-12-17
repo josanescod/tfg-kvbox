@@ -50,7 +50,7 @@ message:
 # Optional navbar
 # links: [] # Allows for navbar (dark mode, layout, and search) without any links
 links:
-- name: "Alumne: Jose Luis Sánchez "
+- name: "Alumne: Jose Luis Sanchez "
   # icon: "fab fa-github"
   # url: "https://github.com/josanescod/tfg-kvbox"
   target: "_blank" # optional html a tag target attribute
@@ -70,7 +70,7 @@ services:
     logo: "assets/tools/skooner.png"
     subtitle: "Administració web"
     tag: "app"
-    keywords: "self hosted reddit"
+    keywords: ""
     url: "https://dashboard.josanesc.com"
     target: "_blank"
   - name: "Ollama-AI"
@@ -83,8 +83,15 @@ services:
     logo: "assets/tools/gitea.png"
     subtitle: "Manifests del clúster"
     tag: "app"
-    keywords: "self hosted reddit"
+    keywords: ""
     url: "https://repository.josanesc.com"
+    target: "_blank"
+  - name: "Influxdb"
+    logo: "assets/tools/influxdb.png"
+    subtitle: "Base de dades de series temporals"
+    tag: "app"
+    keywords: ""
+    url: "https://influxdb.josanesc.com"
     target: "_blank"
   - name: "Docs"
     logo: "assets/tools/mkdocs.png"
