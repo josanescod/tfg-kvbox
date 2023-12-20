@@ -585,245 +585,264 @@
 <h2 id="afegir-un-tercer-node-al-cluster">Afegir un tercer node al clúster</h2>
 <p>Instal·lar a la nova màquina kubeadm, seguint els passos d'aquest enllaç: <a href="/local_test/kubeadm/#worker1" target="_blank">kubeadm</a></p>
 <p>Configurar el firewall del nou node, obrir el port 8472/udp (que utilitza <a href="https://docs.cilium.io/en/stable/network/concepts/routing/" target="_blank">cilium</a>) </p>
-<div class="highlight"><pre><span></span><code>sudo ufw allow 10250/tcp
-sudo ufw allow 30000:32767/tcp
-sudo ufw allow 8472/udp
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="m">10250</span>/tcp
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="m">30000</span>:32767/tcp
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>sudo<span class="w"> </span>ufw<span class="w"> </span>allow<span class="w"> </span><span class="m">8472</span>/udp
+</span></code></pre></div>
 <p>Executar la següent instrucció  al controlplane, </p>
-<div class="highlight"><pre><span></span><code>kubeadm token create --print-join-command
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubeadm<span class="w"> </span>token<span class="w"> </span>create<span class="w"> </span>--print-join-command
+</span></code></pre></div>
 <p>Al worker2 executar el resultat de la comanda anterior que ha generat un nou token per unir el nou node al clúster.</p>
-<div class="highlight"><pre><span></span><code>kubeadm join --token token_exemple controlplane:6443 \
---discovery-token-ca-cert-hash sha256:hash_exemple 
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubeadm<span class="w"> </span>join<span class="w"> </span>--token<span class="w"> </span>token_exemple<span class="w"> </span>controlplane:6443<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>--discovery-token-ca-cert-hash<span class="w"> </span>sha256:hash_exemple<span class="w"> </span>
+</span></code></pre></div>
 <h2 id="installacio-dinfluxdb">Instal·lació d'influxdb</h2>
 <p><a href="https://github.com/influxdata/helm-charts/tree/master/charts/influxdb2" target="_blank">chart-influxdb2</a></p>
-<div class="highlight"><pre><span></span><code>helm repo add influxdata https://helm.influxdata.com/
-helm repo update
-helm install influxdb influxdata/influxdb2 --set persistence.enabled=false
-
-# token
-echo $(kubectl get secret influxdb-influxdb2-auth -o &quot;jsonpath={.data[&#39;admin-password&#39;]}&quot; --namespace default | base64 --decode)
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>influxdata<span class="w"> </span>https://helm.influxdata.com/
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>update
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>helm<span class="w"> </span>install<span class="w"> </span>influxdb<span class="w"> </span>influxdata/influxdb2<span class="w"> </span>--set<span class="w"> </span>persistence.enabled<span class="o">=</span><span class="nb">false</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># token</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nb">echo</span><span class="w"> </span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>influxdb-influxdb2-auth<span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;jsonpath={.data[&#39;admin-password&#39;]}&quot;</span><span class="w"> </span>--namespace<span class="w"> </span>default<span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode<span class="k">)</span>
+</span></code></pre></div>
 <p>Entrar amb l'usuari/contrassenya i crear una organització, un bucket i un API token.</p>
+<ul>
+<li>Automatitzar crear organització test</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>influx<span class="w"> </span>org<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span><span class="nb">test</span>
+</span></code></pre></div>
+<ul>
+<li>Automatitzar crear bucket test</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>influx<span class="w"> </span>bucket<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>--name<span class="w"> </span>my_schema_bucket<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span>--schema-type<span class="w"> </span>explicit
+</span></code></pre></div>
+<ul>
+<li>Automatitzar crear un API token de test</li>
+</ul>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>influx<span class="w"> </span>auth<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span>--org<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span>--read-bucket<span class="w"> </span>03a2bbf46309a000<span class="w"> </span><span class="se">\</span>
+</span></code></pre></div>
 <h2 id="installacio-de-telegraf">Instal·lació de telegraf</h2>
-<p><div class="highlight"><pre><span></span><code>helm repo add influxdata https://helm.influxdata.com/
-helm repo update
-helm install telegraf -f apps/config/telegraf-config.yaml --set tplVersion=2 influxdata/telegraf
-</code></pre></div>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>influxdata<span class="w"> </span>https://helm.influxdata.com/
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>update
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>helm<span class="w"> </span>install<span class="w"> </span>telegraf<span class="w"> </span>-f<span class="w"> </span>apps/config/telegraf-config.yaml<span class="w"> </span>--set<span class="w"> </span><span class="nv">tplVersion</span><span class="o">=</span><span class="m">2</span><span class="w"> </span>influxdata/telegraf
+</span></code></pre></div>
 Fitxer de configuració de telegraf</p>
 <p>Modificar inputs i outputs</p>
 <p>inputs amb el plugin <a href="https://github.com/influxdata/telegraf/tree/master/plugins/inputs/kube_inventory" target="_blank">kube_inventory</a></p>
-<div class="highlight"><pre><span></span><code># telegraf-config.yaml
-## Default values.yaml for Telegraf
-## This is a YAML-formatted file.
-## ref: https://hub.docker.com/r/library/telegraf/tags/
-
-replicaCount: 1
-image:
-  repo: &quot;docker.io/library/telegraf&quot;
-  tag: &quot;1.29-alpine&quot;
-  pullPolicy: IfNotPresent
-podAnnotations: {}
-podLabels: {}
-imagePullSecrets: []
-## Configure args passed to Telegraf containers
-args: []
-# The name of a secret in the same kubernetes namespace which contains values to
-# be added to the environment (must be manually created)
-# This can be useful for auth tokens, etc.
-
-# envFromSecret: &quot;telegraf-tokens&quot;
-env:
-  - name: HOSTNAME
-    value: &quot;telegraf-polling-service&quot;
-# An older &quot;volumeMounts&quot; key was previously added which will likely
-# NOT WORK as you expect. Please use this newer configuration.
-
-# volumes:
-# - name: telegraf-output-influxdb2
-#   configMap:
-#     name: &quot;telegraf-output-influxdb2&quot;
-# mountPoints:
-# - name: telegraf-output-influxdb2
-#   mountPath: /etc/telegraf/conf.d
-#   subPath: influxdb2.conf
-
-## Configure resource requests and limits
-## ref: http://kubernetes.io/docs/user-guide/compute-resources/
-resources: {}
-# requests:
-#   memory: 128Mi
-#   cpu: 100m
-# limits:
-#   memory: 128Mi
-#   cpu: 100m
-
-## Node labels for pod assignment
-## ref: https://kubernetes.io/docs/user-guide/node-selection/
-nodeSelector: {}
-## Affinity for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-##
-affinity: {}
-## Tolerations for pod assignment
-## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-##
-tolerations: []
-# - key: &quot;key&quot;
-#   operator: &quot;Equal|Exists&quot;
-#   value: &quot;value&quot;
-#   effect: &quot;NoSchedule|PreferNoSchedule|NoExecute(1.6 only)&quot;
-
-## Configure the updateStrategy used to replace Telegraf Pods
-## See https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/
-updateStrategy: {}
-#  type: RollingUpdate|Recreate
-#  rollingUpdate:
-#    maxUnavailable: 1
-#    maxSurge: 1
-
-service:
-  enabled: true
-  type: ClusterIP
-  annotations: {}
-rbac:
-  # Specifies whether RBAC resources should be created
-  create: true 
-  # Create only for the release namespace or cluster wide (Role vs ClusterRole)
-  clusterWide: false
-  # Rules for the created rule
-  # rules: []
-  rules:
-# When using the prometheus input to scrape all pods you need extra rules set to the ClusterRole to be
-# able to scan the pods for scraping labels. The following rules have been taken from:
-# https://github.com/helm/charts/blob/master/stable/prometheus/templates/server-clusterrole.yaml#L8-L46
-    - apiGroups:
-        - &quot;&quot;
-      resources:
-        - nodes
-        - nodes/proxy
-        - nodes/metrics
-        - services
-        - endpoints
-        - pods
-        - ingresses
-        - configmaps
-      verbs:
-        - get
-        - list
-        - watch
-    - apiGroups:
-        - &quot;extensions&quot;
-      resources:
-        - ingresses/status
-        - ingresses
-      verbs:
-        - get
-        - list
-        - watch
-          #    - nonResourceURLs:
-          #        - &quot;/metrics&quot;
-      verbs:
-        - get
-serviceAccount:
-  # Specifies whether a ServiceAccount should be created
-  create: true 
-  # The name of the ServiceAccount to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: 
-  # Annotations for the ServiceAccount
-  annotations: {}
-## Exposed telegraf configuration
-## For full list of possible values see `/docs/all-config-values.yaml` and `/docs/all-config-values.toml`
-## ref: https://docs.influxdata.com/telegraf/v1.1/administration/configuration/
-config:
-  agent:
-    interval: &quot;10s&quot;
-    round_interval: true
-    metric_batch_size: 1000
-    metric_buffer_limit: 10000
-    collection_jitter: &quot;0s&quot;
-    flush_interval: &quot;10s&quot;
-    flush_jitter: &quot;0s&quot;
-    precision: &quot;&quot;
-    debug: false
-    quiet: false
-    logfile: &quot;&quot;
-    hostname: &quot;$HOSTNAME&quot;
-    omit_hostname: false
-  processors:
-    - enum:
-        mapping:
-          field: &quot;status&quot;
-          dest: &quot;status_code&quot;
-          value_mappings:
-            healthy: 1
-            problem: 2
-            critical: 3
-  outputs:
-    - influxdb_v2:
-        urls:
-          - &quot;https://influxdb.josanesc.com&quot;
-        bucket: &quot;test&quot;
-        organization: &quot;test&quot;
-        token: &quot;ySJC4OJkaNcPbSZkmFvevXOEnReWx70Lvl9_NJ5mlWYPjQ4yhP2ivbNHzio6VIhX3lk2X667wp42E6tr2qWPDg==&quot;
-        timeout: &quot;5s&quot;
-        insecure_skip_verify: false
-
-
-  inputs:
-    - kube_inventory:
-        url: &quot;&quot;
-
-    - http_response :
-        urls: [&quot;https://k8s-tfg.josanesc.com&quot;, &quot;https://dashboard.josanesc.com&quot;, &quot;https://chat-ai.josanesc.com&quot;, &quot;https://repository.josanesc.com&quot;, &quot;https://grafana.josanesc.com&quot;, &quot;https://codeserver.josanesc.com&quot;, &quot;https://docs.josanesc.com&quot;, &quot;https://influxdb.josanesc.com&quot;]
-        method: &quot;GET&quot;
-        follow_redirects: true 
-
-    - statsd:
-        service_address: &quot;:8125&quot;
-        percentiles:
-          - 50
-          - 95
-          - 99
-        metric_separator: &quot;_&quot;
-        allowed_pending_messages: 10000
-        percentile_limit: 1000
-metrics:
-  health:
-    enabled: false
-    service_address: &quot;http://:8888&quot;
-    threshold: 5000.0
-  internal:
-    enabled: true
-    collect_memstats: false
-# Lifecycle hooks
-# hooks:
-#   postStart: [&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;echo Telegraf started&quot;]
-#   preStop: [&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;sleep 60&quot;]
-
-## Pod disruption budget configuration
-##
-pdb:
-  ## Specifies whether a Pod disruption budget should be created
-  ##
-  create: true
-  minAvailable: 1
-  # maxUnavailable: 1
-</code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># telegraf-config.yaml</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1">## Default values.yaml for Telegraf</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1">## This is a YAML-formatted file.</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="c1">## ref: https://hub.docker.com/r/library/telegraf/tags/</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="nt">image</span><span class="p">:</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span><span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;docker.io/library/telegraf&quot;</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">  </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.29-alpine&quot;</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span><span class="nt">pullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IfNotPresent</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="nt">podAnnotations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="nt">podLabels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="nt">imagePullSecrets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</span><span id="__span-8-14"><a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a><span class="c1">## Configure args passed to Telegraf containers</span>
+</span><span id="__span-8-15"><a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</span><span id="__span-8-16"><a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="c1"># The name of a secret in the same kubernetes namespace which contains values to</span>
+</span><span id="__span-8-17"><a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="c1"># be added to the environment (must be manually created)</span>
+</span><span id="__span-8-18"><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a><span class="c1"># This can be useful for auth tokens, etc.</span>
+</span><span id="__span-8-19"><a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>
+</span><span id="__span-8-20"><a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a><span class="c1"># envFromSecret: &quot;telegraf-tokens&quot;</span>
+</span><span id="__span-8-21"><a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a><span class="nt">env</span><span class="p">:</span>
+</span><span id="__span-8-22"><a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HOSTNAME</span>
+</span><span id="__span-8-23"><a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a><span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;telegraf-polling-service&quot;</span>
+</span><span id="__span-8-24"><a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a><span class="c1"># An older &quot;volumeMounts&quot; key was previously added which will likely</span>
+</span><span id="__span-8-25"><a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a><span class="c1"># NOT WORK as you expect. Please use this newer configuration.</span>
+</span><span id="__span-8-26"><a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>
+</span><span id="__span-8-27"><a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a><span class="c1"># volumes:</span>
+</span><span id="__span-8-28"><a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a><span class="c1"># - name: telegraf-output-influxdb2</span>
+</span><span id="__span-8-29"><a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a><span class="c1">#   configMap:</span>
+</span><span id="__span-8-30"><a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a><span class="c1">#     name: &quot;telegraf-output-influxdb2&quot;</span>
+</span><span id="__span-8-31"><a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a><span class="c1"># mountPoints:</span>
+</span><span id="__span-8-32"><a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a><span class="c1"># - name: telegraf-output-influxdb2</span>
+</span><span id="__span-8-33"><a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a><span class="c1">#   mountPath: /etc/telegraf/conf.d</span>
+</span><span id="__span-8-34"><a id="__codelineno-8-34" name="__codelineno-8-34" href="#__codelineno-8-34"></a><span class="c1">#   subPath: influxdb2.conf</span>
+</span><span id="__span-8-35"><a id="__codelineno-8-35" name="__codelineno-8-35" href="#__codelineno-8-35"></a>
+</span><span id="__span-8-36"><a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a><span class="c1">## Configure resource requests and limits</span>
+</span><span id="__span-8-37"><a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a><span class="c1">## ref: http://kubernetes.io/docs/user-guide/compute-resources/</span>
+</span><span id="__span-8-38"><a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</span><span id="__span-8-39"><a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a><span class="c1"># requests:</span>
+</span><span id="__span-8-40"><a id="__codelineno-8-40" name="__codelineno-8-40" href="#__codelineno-8-40"></a><span class="c1">#   memory: 128Mi</span>
+</span><span id="__span-8-41"><a id="__codelineno-8-41" name="__codelineno-8-41" href="#__codelineno-8-41"></a><span class="c1">#   cpu: 100m</span>
+</span><span id="__span-8-42"><a id="__codelineno-8-42" name="__codelineno-8-42" href="#__codelineno-8-42"></a><span class="c1"># limits:</span>
+</span><span id="__span-8-43"><a id="__codelineno-8-43" name="__codelineno-8-43" href="#__codelineno-8-43"></a><span class="c1">#   memory: 128Mi</span>
+</span><span id="__span-8-44"><a id="__codelineno-8-44" name="__codelineno-8-44" href="#__codelineno-8-44"></a><span class="c1">#   cpu: 100m</span>
+</span><span id="__span-8-45"><a id="__codelineno-8-45" name="__codelineno-8-45" href="#__codelineno-8-45"></a>
+</span><span id="__span-8-46"><a id="__codelineno-8-46" name="__codelineno-8-46" href="#__codelineno-8-46"></a><span class="c1">## Node labels for pod assignment</span>
+</span><span id="__span-8-47"><a id="__codelineno-8-47" name="__codelineno-8-47" href="#__codelineno-8-47"></a><span class="c1">## ref: https://kubernetes.io/docs/user-guide/node-selection/</span>
+</span><span id="__span-8-48"><a id="__codelineno-8-48" name="__codelineno-8-48" href="#__codelineno-8-48"></a><span class="nt">nodeSelector</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</span><span id="__span-8-49"><a id="__codelineno-8-49" name="__codelineno-8-49" href="#__codelineno-8-49"></a><span class="c1">## Affinity for pod assignment</span>
+</span><span id="__span-8-50"><a id="__codelineno-8-50" name="__codelineno-8-50" href="#__codelineno-8-50"></a><span class="c1">## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity</span>
+</span><span id="__span-8-51"><a id="__codelineno-8-51" name="__codelineno-8-51" href="#__codelineno-8-51"></a><span class="c1">##</span>
+</span><span id="__span-8-52"><a id="__codelineno-8-52" name="__codelineno-8-52" href="#__codelineno-8-52"></a><span class="nt">affinity</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</span><span id="__span-8-53"><a id="__codelineno-8-53" name="__codelineno-8-53" href="#__codelineno-8-53"></a><span class="c1">## Tolerations for pod assignment</span>
+</span><span id="__span-8-54"><a id="__codelineno-8-54" name="__codelineno-8-54" href="#__codelineno-8-54"></a><span class="c1">## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/</span>
+</span><span id="__span-8-55"><a id="__codelineno-8-55" name="__codelineno-8-55" href="#__codelineno-8-55"></a><span class="c1">##</span>
+</span><span id="__span-8-56"><a id="__codelineno-8-56" name="__codelineno-8-56" href="#__codelineno-8-56"></a><span class="nt">tolerations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+</span><span id="__span-8-57"><a id="__codelineno-8-57" name="__codelineno-8-57" href="#__codelineno-8-57"></a><span class="c1"># - key: &quot;key&quot;</span>
+</span><span id="__span-8-58"><a id="__codelineno-8-58" name="__codelineno-8-58" href="#__codelineno-8-58"></a><span class="c1">#   operator: &quot;Equal|Exists&quot;</span>
+</span><span id="__span-8-59"><a id="__codelineno-8-59" name="__codelineno-8-59" href="#__codelineno-8-59"></a><span class="c1">#   value: &quot;value&quot;</span>
+</span><span id="__span-8-60"><a id="__codelineno-8-60" name="__codelineno-8-60" href="#__codelineno-8-60"></a><span class="c1">#   effect: &quot;NoSchedule|PreferNoSchedule|NoExecute(1.6 only)&quot;</span>
+</span><span id="__span-8-61"><a id="__codelineno-8-61" name="__codelineno-8-61" href="#__codelineno-8-61"></a>
+</span><span id="__span-8-62"><a id="__codelineno-8-62" name="__codelineno-8-62" href="#__codelineno-8-62"></a><span class="c1">## Configure the updateStrategy used to replace Telegraf Pods</span>
+</span><span id="__span-8-63"><a id="__codelineno-8-63" name="__codelineno-8-63" href="#__codelineno-8-63"></a><span class="c1">## See https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/</span>
+</span><span id="__span-8-64"><a id="__codelineno-8-64" name="__codelineno-8-64" href="#__codelineno-8-64"></a><span class="nt">updateStrategy</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</span><span id="__span-8-65"><a id="__codelineno-8-65" name="__codelineno-8-65" href="#__codelineno-8-65"></a><span class="c1">#  type: RollingUpdate|Recreate</span>
+</span><span id="__span-8-66"><a id="__codelineno-8-66" name="__codelineno-8-66" href="#__codelineno-8-66"></a><span class="c1">#  rollingUpdate:</span>
+</span><span id="__span-8-67"><a id="__codelineno-8-67" name="__codelineno-8-67" href="#__codelineno-8-67"></a><span class="c1">#    maxUnavailable: 1</span>
+</span><span id="__span-8-68"><a id="__codelineno-8-68" name="__codelineno-8-68" href="#__codelineno-8-68"></a><span class="c1">#    maxSurge: 1</span>
+</span><span id="__span-8-69"><a id="__codelineno-8-69" name="__codelineno-8-69" href="#__codelineno-8-69"></a>
+</span><span id="__span-8-70"><a id="__codelineno-8-70" name="__codelineno-8-70" href="#__codelineno-8-70"></a><span class="nt">service</span><span class="p">:</span>
+</span><span id="__span-8-71"><a id="__codelineno-8-71" name="__codelineno-8-71" href="#__codelineno-8-71"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-8-72"><a id="__codelineno-8-72" name="__codelineno-8-72" href="#__codelineno-8-72"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+</span><span id="__span-8-73"><a id="__codelineno-8-73" name="__codelineno-8-73" href="#__codelineno-8-73"></a><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</span><span id="__span-8-74"><a id="__codelineno-8-74" name="__codelineno-8-74" href="#__codelineno-8-74"></a><span class="nt">rbac</span><span class="p">:</span>
+</span><span id="__span-8-75"><a id="__codelineno-8-75" name="__codelineno-8-75" href="#__codelineno-8-75"></a><span class="w">  </span><span class="c1"># Specifies whether RBAC resources should be created</span>
+</span><span id="__span-8-76"><a id="__codelineno-8-76" name="__codelineno-8-76" href="#__codelineno-8-76"></a><span class="w">  </span><span class="nt">create</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span>
+</span><span id="__span-8-77"><a id="__codelineno-8-77" name="__codelineno-8-77" href="#__codelineno-8-77"></a><span class="w">  </span><span class="c1"># Create only for the release namespace or cluster wide (Role vs ClusterRole)</span>
+</span><span id="__span-8-78"><a id="__codelineno-8-78" name="__codelineno-8-78" href="#__codelineno-8-78"></a><span class="w">  </span><span class="nt">clusterWide</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-8-79"><a id="__codelineno-8-79" name="__codelineno-8-79" href="#__codelineno-8-79"></a><span class="w">  </span><span class="c1"># Rules for the created rule</span>
+</span><span id="__span-8-80"><a id="__codelineno-8-80" name="__codelineno-8-80" href="#__codelineno-8-80"></a><span class="w">  </span><span class="c1"># rules: []</span>
+</span><span id="__span-8-81"><a id="__codelineno-8-81" name="__codelineno-8-81" href="#__codelineno-8-81"></a><span class="w">  </span><span class="nt">rules</span><span class="p">:</span>
+</span><span id="__span-8-82"><a id="__codelineno-8-82" name="__codelineno-8-82" href="#__codelineno-8-82"></a><span class="c1"># When using the prometheus input to scrape all pods you need extra rules set to the ClusterRole to be</span>
+</span><span id="__span-8-83"><a id="__codelineno-8-83" name="__codelineno-8-83" href="#__codelineno-8-83"></a><span class="c1"># able to scan the pods for scraping labels. The following rules have been taken from:</span>
+</span><span id="__span-8-84"><a id="__codelineno-8-84" name="__codelineno-8-84" href="#__codelineno-8-84"></a><span class="c1"># https://github.com/helm/charts/blob/master/stable/prometheus/templates/server-clusterrole.yaml#L8-L46</span>
+</span><span id="__span-8-85"><a id="__codelineno-8-85" name="__codelineno-8-85" href="#__codelineno-8-85"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span>
+</span><span id="__span-8-86"><a id="__codelineno-8-86" name="__codelineno-8-86" href="#__codelineno-8-86"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</span><span id="__span-8-87"><a id="__codelineno-8-87" name="__codelineno-8-87" href="#__codelineno-8-87"></a><span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+</span><span id="__span-8-88"><a id="__codelineno-8-88" name="__codelineno-8-88" href="#__codelineno-8-88"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nodes</span>
+</span><span id="__span-8-89"><a id="__codelineno-8-89" name="__codelineno-8-89" href="#__codelineno-8-89"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nodes/proxy</span>
+</span><span id="__span-8-90"><a id="__codelineno-8-90" name="__codelineno-8-90" href="#__codelineno-8-90"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nodes/metrics</span>
+</span><span id="__span-8-91"><a id="__codelineno-8-91" name="__codelineno-8-91" href="#__codelineno-8-91"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">services</span>
+</span><span id="__span-8-92"><a id="__codelineno-8-92" name="__codelineno-8-92" href="#__codelineno-8-92"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">endpoints</span>
+</span><span id="__span-8-93"><a id="__codelineno-8-93" name="__codelineno-8-93" href="#__codelineno-8-93"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pods</span>
+</span><span id="__span-8-94"><a id="__codelineno-8-94" name="__codelineno-8-94" href="#__codelineno-8-94"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingresses</span>
+</span><span id="__span-8-95"><a id="__codelineno-8-95" name="__codelineno-8-95" href="#__codelineno-8-95"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">configmaps</span>
+</span><span id="__span-8-96"><a id="__codelineno-8-96" name="__codelineno-8-96" href="#__codelineno-8-96"></a><span class="w">      </span><span class="nt">verbs</span><span class="p">:</span>
+</span><span id="__span-8-97"><a id="__codelineno-8-97" name="__codelineno-8-97" href="#__codelineno-8-97"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">get</span>
+</span><span id="__span-8-98"><a id="__codelineno-8-98" name="__codelineno-8-98" href="#__codelineno-8-98"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">list</span>
+</span><span id="__span-8-99"><a id="__codelineno-8-99" name="__codelineno-8-99" href="#__codelineno-8-99"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">watch</span>
+</span><span id="__span-8-100"><a id="__codelineno-8-100" name="__codelineno-8-100" href="#__codelineno-8-100"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">apiGroups</span><span class="p">:</span>
+</span><span id="__span-8-101"><a id="__codelineno-8-101" name="__codelineno-8-101" href="#__codelineno-8-101"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;extensions&quot;</span>
+</span><span id="__span-8-102"><a id="__codelineno-8-102" name="__codelineno-8-102" href="#__codelineno-8-102"></a><span class="w">      </span><span class="nt">resources</span><span class="p">:</span>
+</span><span id="__span-8-103"><a id="__codelineno-8-103" name="__codelineno-8-103" href="#__codelineno-8-103"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingresses/status</span>
+</span><span id="__span-8-104"><a id="__codelineno-8-104" name="__codelineno-8-104" href="#__codelineno-8-104"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ingresses</span>
+</span><span id="__span-8-105"><a id="__codelineno-8-105" name="__codelineno-8-105" href="#__codelineno-8-105"></a><span class="w">      </span><span class="nt">verbs</span><span class="p">:</span>
+</span><span id="__span-8-106"><a id="__codelineno-8-106" name="__codelineno-8-106" href="#__codelineno-8-106"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">get</span>
+</span><span id="__span-8-107"><a id="__codelineno-8-107" name="__codelineno-8-107" href="#__codelineno-8-107"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">list</span>
+</span><span id="__span-8-108"><a id="__codelineno-8-108" name="__codelineno-8-108" href="#__codelineno-8-108"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">watch</span>
+</span><span id="__span-8-109"><a id="__codelineno-8-109" name="__codelineno-8-109" href="#__codelineno-8-109"></a><span class="w">          </span><span class="l l-Scalar l-Scalar-Plain">#    - nonResourceURLs</span><span class="p p-Indicator">:</span>
+</span><span id="__span-8-110"><a id="__codelineno-8-110" name="__codelineno-8-110" href="#__codelineno-8-110"></a><span class="w">          </span><span class="c1">#        - &quot;/metrics&quot;</span>
+</span><span id="__span-8-111"><a id="__codelineno-8-111" name="__codelineno-8-111" href="#__codelineno-8-111"></a><span class="w">      </span><span class="nt">verbs</span><span class="p">:</span>
+</span><span id="__span-8-112"><a id="__codelineno-8-112" name="__codelineno-8-112" href="#__codelineno-8-112"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">get</span>
+</span><span id="__span-8-113"><a id="__codelineno-8-113" name="__codelineno-8-113" href="#__codelineno-8-113"></a><span class="nt">serviceAccount</span><span class="p">:</span>
+</span><span id="__span-8-114"><a id="__codelineno-8-114" name="__codelineno-8-114" href="#__codelineno-8-114"></a><span class="w">  </span><span class="c1"># Specifies whether a ServiceAccount should be created</span>
+</span><span id="__span-8-115"><a id="__codelineno-8-115" name="__codelineno-8-115" href="#__codelineno-8-115"></a><span class="w">  </span><span class="nt">create</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span>
+</span><span id="__span-8-116"><a id="__codelineno-8-116" name="__codelineno-8-116" href="#__codelineno-8-116"></a><span class="w">  </span><span class="c1"># The name of the ServiceAccount to use.</span>
+</span><span id="__span-8-117"><a id="__codelineno-8-117" name="__codelineno-8-117" href="#__codelineno-8-117"></a><span class="w">  </span><span class="c1"># If not set and create is true, a name is generated using the fullname template</span>
+</span><span id="__span-8-118"><a id="__codelineno-8-118" name="__codelineno-8-118" href="#__codelineno-8-118"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span>
+</span><span id="__span-8-119"><a id="__codelineno-8-119" name="__codelineno-8-119" href="#__codelineno-8-119"></a><span class="w">  </span><span class="c1"># Annotations for the ServiceAccount</span>
+</span><span id="__span-8-120"><a id="__codelineno-8-120" name="__codelineno-8-120" href="#__codelineno-8-120"></a><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</span><span id="__span-8-121"><a id="__codelineno-8-121" name="__codelineno-8-121" href="#__codelineno-8-121"></a><span class="c1">## Exposed telegraf configuration</span>
+</span><span id="__span-8-122"><a id="__codelineno-8-122" name="__codelineno-8-122" href="#__codelineno-8-122"></a><span class="c1">## For full list of possible values see `/docs/all-config-values.yaml` and `/docs/all-config-values.toml`</span>
+</span><span id="__span-8-123"><a id="__codelineno-8-123" name="__codelineno-8-123" href="#__codelineno-8-123"></a><span class="c1">## ref: https://docs.influxdata.com/telegraf/v1.1/administration/configuration/</span>
+</span><span id="__span-8-124"><a id="__codelineno-8-124" name="__codelineno-8-124" href="#__codelineno-8-124"></a><span class="nt">config</span><span class="p">:</span>
+</span><span id="__span-8-125"><a id="__codelineno-8-125" name="__codelineno-8-125" href="#__codelineno-8-125"></a><span class="w">  </span><span class="nt">agent</span><span class="p">:</span>
+</span><span id="__span-8-126"><a id="__codelineno-8-126" name="__codelineno-8-126" href="#__codelineno-8-126"></a><span class="w">    </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;10s&quot;</span>
+</span><span id="__span-8-127"><a id="__codelineno-8-127" name="__codelineno-8-127" href="#__codelineno-8-127"></a><span class="w">    </span><span class="nt">round_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-8-128"><a id="__codelineno-8-128" name="__codelineno-8-128" href="#__codelineno-8-128"></a><span class="w">    </span><span class="nt">metric_batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+</span><span id="__span-8-129"><a id="__codelineno-8-129" name="__codelineno-8-129" href="#__codelineno-8-129"></a><span class="w">    </span><span class="nt">metric_buffer_limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+</span><span id="__span-8-130"><a id="__codelineno-8-130" name="__codelineno-8-130" href="#__codelineno-8-130"></a><span class="w">    </span><span class="nt">collection_jitter</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0s&quot;</span>
+</span><span id="__span-8-131"><a id="__codelineno-8-131" name="__codelineno-8-131" href="#__codelineno-8-131"></a><span class="w">    </span><span class="nt">flush_interval</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;10s&quot;</span>
+</span><span id="__span-8-132"><a id="__codelineno-8-132" name="__codelineno-8-132" href="#__codelineno-8-132"></a><span class="w">    </span><span class="nt">flush_jitter</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;0s&quot;</span>
+</span><span id="__span-8-133"><a id="__codelineno-8-133" name="__codelineno-8-133" href="#__codelineno-8-133"></a><span class="w">    </span><span class="nt">precision</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</span><span id="__span-8-134"><a id="__codelineno-8-134" name="__codelineno-8-134" href="#__codelineno-8-134"></a><span class="w">    </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-8-135"><a id="__codelineno-8-135" name="__codelineno-8-135" href="#__codelineno-8-135"></a><span class="w">    </span><span class="nt">quiet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-8-136"><a id="__codelineno-8-136" name="__codelineno-8-136" href="#__codelineno-8-136"></a><span class="w">    </span><span class="nt">logfile</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</span><span id="__span-8-137"><a id="__codelineno-8-137" name="__codelineno-8-137" href="#__codelineno-8-137"></a><span class="w">    </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$HOSTNAME&quot;</span>
+</span><span id="__span-8-138"><a id="__codelineno-8-138" name="__codelineno-8-138" href="#__codelineno-8-138"></a><span class="w">    </span><span class="nt">omit_hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-8-139"><a id="__codelineno-8-139" name="__codelineno-8-139" href="#__codelineno-8-139"></a><span class="w">  </span><span class="nt">processors</span><span class="p">:</span>
+</span><span id="__span-8-140"><a id="__codelineno-8-140" name="__codelineno-8-140" href="#__codelineno-8-140"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">enum</span><span class="p">:</span>
+</span><span id="__span-8-141"><a id="__codelineno-8-141" name="__codelineno-8-141" href="#__codelineno-8-141"></a><span class="w">        </span><span class="nt">mapping</span><span class="p">:</span>
+</span><span id="__span-8-142"><a id="__codelineno-8-142" name="__codelineno-8-142" href="#__codelineno-8-142"></a><span class="w">          </span><span class="nt">field</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;status&quot;</span>
+</span><span id="__span-8-143"><a id="__codelineno-8-143" name="__codelineno-8-143" href="#__codelineno-8-143"></a><span class="w">          </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;status_code&quot;</span>
+</span><span id="__span-8-144"><a id="__codelineno-8-144" name="__codelineno-8-144" href="#__codelineno-8-144"></a><span class="w">          </span><span class="nt">value_mappings</span><span class="p">:</span>
+</span><span id="__span-8-145"><a id="__codelineno-8-145" name="__codelineno-8-145" href="#__codelineno-8-145"></a><span class="w">            </span><span class="nt">healthy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-8-146"><a id="__codelineno-8-146" name="__codelineno-8-146" href="#__codelineno-8-146"></a><span class="w">            </span><span class="nt">problem</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+</span><span id="__span-8-147"><a id="__codelineno-8-147" name="__codelineno-8-147" href="#__codelineno-8-147"></a><span class="w">            </span><span class="nt">critical</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</span><span id="__span-8-148"><a id="__codelineno-8-148" name="__codelineno-8-148" href="#__codelineno-8-148"></a><span class="w">  </span><span class="nt">outputs</span><span class="p">:</span>
+</span><span id="__span-8-149"><a id="__codelineno-8-149" name="__codelineno-8-149" href="#__codelineno-8-149"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">influxdb_v2</span><span class="p">:</span>
+</span><span id="__span-8-150"><a id="__codelineno-8-150" name="__codelineno-8-150" href="#__codelineno-8-150"></a><span class="w">        </span><span class="nt">urls</span><span class="p">:</span>
+</span><span id="__span-8-151"><a id="__codelineno-8-151" name="__codelineno-8-151" href="#__codelineno-8-151"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;https://influxdb.josanesc.com&quot;</span>
+</span><span id="__span-8-152"><a id="__codelineno-8-152" name="__codelineno-8-152" href="#__codelineno-8-152"></a><span class="w">        </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test&quot;</span>
+</span><span id="__span-8-153"><a id="__codelineno-8-153" name="__codelineno-8-153" href="#__codelineno-8-153"></a><span class="w">        </span><span class="nt">organization</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;test&quot;</span>
+</span><span id="__span-8-154"><a id="__codelineno-8-154" name="__codelineno-8-154" href="#__codelineno-8-154"></a><span class="w">        </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ySJC4OJkaNcPbSZkmFvevXOEnReWx70Lvl9_NJ5mlWYPjQ4yhP2ivbNHzio6VIhX3lk2X667wp42E6tr2qWPDg==&quot;</span>
+</span><span id="__span-8-155"><a id="__codelineno-8-155" name="__codelineno-8-155" href="#__codelineno-8-155"></a><span class="w">        </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;5s&quot;</span>
+</span><span id="__span-8-156"><a id="__codelineno-8-156" name="__codelineno-8-156" href="#__codelineno-8-156"></a><span class="w">        </span><span class="nt">insecure_skip_verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-8-157"><a id="__codelineno-8-157" name="__codelineno-8-157" href="#__codelineno-8-157"></a>
+</span><span id="__span-8-158"><a id="__codelineno-8-158" name="__codelineno-8-158" href="#__codelineno-8-158"></a>
+</span><span id="__span-8-159"><a id="__codelineno-8-159" name="__codelineno-8-159" href="#__codelineno-8-159"></a><span class="w">  </span><span class="nt">inputs</span><span class="p">:</span>
+</span><span id="__span-8-160"><a id="__codelineno-8-160" name="__codelineno-8-160" href="#__codelineno-8-160"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">kube_inventory</span><span class="p">:</span>
+</span><span id="__span-8-161"><a id="__codelineno-8-161" name="__codelineno-8-161" href="#__codelineno-8-161"></a><span class="w">        </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</span><span id="__span-8-162"><a id="__codelineno-8-162" name="__codelineno-8-162" href="#__codelineno-8-162"></a>
+</span><span id="__span-8-163"><a id="__codelineno-8-163" name="__codelineno-8-163" href="#__codelineno-8-163"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">http_response </span><span class="p">:</span>
+</span><span id="__span-8-164"><a id="__codelineno-8-164" name="__codelineno-8-164" href="#__codelineno-8-164"></a><span class="w">        </span><span class="nt">urls</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;https://k8s-tfg.josanesc.com&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;https://dashboard.josanesc.com&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;https://chat-ai.josanesc.com&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;https://repository.josanesc.com&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;https://grafana.josanesc.com&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;https://codeserver.josanesc.com&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;https://docs.josanesc.com&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;https://influxdb.josanesc.com&quot;</span><span class="p p-Indicator">]</span>
+</span><span id="__span-8-165"><a id="__codelineno-8-165" name="__codelineno-8-165" href="#__codelineno-8-165"></a><span class="w">        </span><span class="nt">method</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;GET&quot;</span>
+</span><span id="__span-8-166"><a id="__codelineno-8-166" name="__codelineno-8-166" href="#__codelineno-8-166"></a><span class="w">        </span><span class="nt">follow_redirects</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span>
+</span><span id="__span-8-167"><a id="__codelineno-8-167" name="__codelineno-8-167" href="#__codelineno-8-167"></a>
+</span><span id="__span-8-168"><a id="__codelineno-8-168" name="__codelineno-8-168" href="#__codelineno-8-168"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">statsd</span><span class="p">:</span>
+</span><span id="__span-8-169"><a id="__codelineno-8-169" name="__codelineno-8-169" href="#__codelineno-8-169"></a><span class="w">        </span><span class="nt">service_address</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;:8125&quot;</span>
+</span><span id="__span-8-170"><a id="__codelineno-8-170" name="__codelineno-8-170" href="#__codelineno-8-170"></a><span class="w">        </span><span class="nt">percentiles</span><span class="p">:</span>
+</span><span id="__span-8-171"><a id="__codelineno-8-171" name="__codelineno-8-171" href="#__codelineno-8-171"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">50</span>
+</span><span id="__span-8-172"><a id="__codelineno-8-172" name="__codelineno-8-172" href="#__codelineno-8-172"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">95</span>
+</span><span id="__span-8-173"><a id="__codelineno-8-173" name="__codelineno-8-173" href="#__codelineno-8-173"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">99</span>
+</span><span id="__span-8-174"><a id="__codelineno-8-174" name="__codelineno-8-174" href="#__codelineno-8-174"></a><span class="w">        </span><span class="nt">metric_separator</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;_&quot;</span>
+</span><span id="__span-8-175"><a id="__codelineno-8-175" name="__codelineno-8-175" href="#__codelineno-8-175"></a><span class="w">        </span><span class="nt">allowed_pending_messages</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10000</span>
+</span><span id="__span-8-176"><a id="__codelineno-8-176" name="__codelineno-8-176" href="#__codelineno-8-176"></a><span class="w">        </span><span class="nt">percentile_limit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+</span><span id="__span-8-177"><a id="__codelineno-8-177" name="__codelineno-8-177" href="#__codelineno-8-177"></a><span class="nt">metrics</span><span class="p">:</span>
+</span><span id="__span-8-178"><a id="__codelineno-8-178" name="__codelineno-8-178" href="#__codelineno-8-178"></a><span class="w">  </span><span class="nt">health</span><span class="p">:</span>
+</span><span id="__span-8-179"><a id="__codelineno-8-179" name="__codelineno-8-179" href="#__codelineno-8-179"></a><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-8-180"><a id="__codelineno-8-180" name="__codelineno-8-180" href="#__codelineno-8-180"></a><span class="w">    </span><span class="nt">service_address</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;http://:8888&quot;</span>
+</span><span id="__span-8-181"><a id="__codelineno-8-181" name="__codelineno-8-181" href="#__codelineno-8-181"></a><span class="w">    </span><span class="nt">threshold</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000.0</span>
+</span><span id="__span-8-182"><a id="__codelineno-8-182" name="__codelineno-8-182" href="#__codelineno-8-182"></a><span class="w">  </span><span class="nt">internal</span><span class="p">:</span>
+</span><span id="__span-8-183"><a id="__codelineno-8-183" name="__codelineno-8-183" href="#__codelineno-8-183"></a><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-8-184"><a id="__codelineno-8-184" name="__codelineno-8-184" href="#__codelineno-8-184"></a><span class="w">    </span><span class="nt">collect_memstats</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="__span-8-185"><a id="__codelineno-8-185" name="__codelineno-8-185" href="#__codelineno-8-185"></a><span class="c1"># Lifecycle hooks</span>
+</span><span id="__span-8-186"><a id="__codelineno-8-186" name="__codelineno-8-186" href="#__codelineno-8-186"></a><span class="c1"># hooks:</span>
+</span><span id="__span-8-187"><a id="__codelineno-8-187" name="__codelineno-8-187" href="#__codelineno-8-187"></a><span class="c1">#   postStart: [&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;echo Telegraf started&quot;]</span>
+</span><span id="__span-8-188"><a id="__codelineno-8-188" name="__codelineno-8-188" href="#__codelineno-8-188"></a><span class="c1">#   preStop: [&quot;/bin/sh&quot;, &quot;-c&quot;, &quot;sleep 60&quot;]</span>
+</span><span id="__span-8-189"><a id="__codelineno-8-189" name="__codelineno-8-189" href="#__codelineno-8-189"></a>
+</span><span id="__span-8-190"><a id="__codelineno-8-190" name="__codelineno-8-190" href="#__codelineno-8-190"></a><span class="c1">## Pod disruption budget configuration</span>
+</span><span id="__span-8-191"><a id="__codelineno-8-191" name="__codelineno-8-191" href="#__codelineno-8-191"></a><span class="c1">##</span>
+</span><span id="__span-8-192"><a id="__codelineno-8-192" name="__codelineno-8-192" href="#__codelineno-8-192"></a><span class="nt">pdb</span><span class="p">:</span>
+</span><span id="__span-8-193"><a id="__codelineno-8-193" name="__codelineno-8-193" href="#__codelineno-8-193"></a><span class="w">  </span><span class="c1">## Specifies whether a Pod disruption budget should be created</span>
+</span><span id="__span-8-194"><a id="__codelineno-8-194" name="__codelineno-8-194" href="#__codelineno-8-194"></a><span class="w">  </span><span class="c1">##</span>
+</span><span id="__span-8-195"><a id="__codelineno-8-195" name="__codelineno-8-195" href="#__codelineno-8-195"></a><span class="w">  </span><span class="nt">create</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="__span-8-196"><a id="__codelineno-8-196" name="__codelineno-8-196" href="#__codelineno-8-196"></a><span class="w">  </span><span class="nt">minAvailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-8-197"><a id="__codelineno-8-197" name="__codelineno-8-197" href="#__codelineno-8-197"></a><span class="w">  </span><span class="c1"># maxUnavailable: 1</span>
+</span></code></pre></div>
 <p>Executar el pod:</p>
-<p><div class="highlight"><pre><span></span><code>kubectl exec -i -t --namespace default $(kubectl get pods --namespace default -l app.kubernetes.io/name=telegraf -o jsonpath=&#39;{.items[0].metadata.name}&#39;) /bin/sh
-</code></pre></div>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-i<span class="w"> </span>-t<span class="w"> </span>--namespace<span class="w"> </span>default<span class="w"> </span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>default<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/name<span class="o">=</span>telegraf<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.items[0].metadata.name}&#39;</span><span class="k">)</span><span class="w"> </span>/bin/sh
+</span></code></pre></div>
 Veure logs:</p>
-<div class="highlight"><pre><span></span><code>kubectl logs -f --namespace default $(kubectl get pods --namespace default -l app.kubernetes.io/name=telegraf -o jsonpath=&#39;{ .items[0].metadata.name }&#39;)
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>--namespace<span class="w"> </span>default<span class="w"> </span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--namespace<span class="w"> </span>default<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/name<span class="o">=</span>telegraf<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{ .items[0].metadata.name }&#39;</span><span class="k">)</span>
+</span></code></pre></div>
 <h2 id="installacio-de-grafana">Instal·lació  de Grafana</h2>
-<div class="highlight"><pre><span></span><code>helm upgrade --install grafana grafana/grafana
-
-# token
-kubectl get secret --namespace default grafana -o jsonpath=&quot;{.data.admin-password}&quot; | base64 --decode ; echo
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>grafana<span class="w"> </span>grafana/grafana
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="c1"># token</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>--namespace<span class="w"> </span>default<span class="w"> </span>grafana<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s2">&quot;{.data.admin-password}&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode<span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="nb">echo</span>
+</span></code></pre></div>
 
 
 

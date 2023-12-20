@@ -764,195 +764,195 @@
 virtual de l'entorn de proves.</p>
 <h2 id="creacio-del-cluster">Creació del clúster</h2>
 <p>Creem un fitxer kind-example-config.yaml amb el següent contingut:</p>
-<div class="highlight"><pre><span></span><code>apiVersion: kind.x-k8s.io/v1alpha4
-kind: Cluster
-nodes:
-- role: control-plane
-- role: worker
-- role: worker
-  extraPortMappings:
-  - containerPort: 30000
-    hostPort: 7000
-</code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind.x-k8s.io/v1alpha4</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cluster</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nt">nodes</span><span class="p">:</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">control-plane</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">worker</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">worker</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">extraPortMappings</span><span class="p">:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30000</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span><span class="nt">hostPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7000</span>
+</span></code></pre></div>
 <p>kind create cluster --config kind-example-config.yaml</p>
 <p>export KUBECONFIG per poder utilizar kubectl</p>
 <h2 id="etiquetes-de-rol-als-dos-nodes-workers">Etiquetes de rol als dos nodes workers</h2>
-<div class="highlight"><pre><span></span><code>kubectl label node kind-worker node-role.kubernetes.io/worker=worker
-kubectl label node kind-worker2 node-role.kubernetes.io/worker=worker
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>kind-worker<span class="w"> </span>node-role.kubernetes.io/worker<span class="o">=</span>worker
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>kind-worker2<span class="w"> </span>node-role.kubernetes.io/worker<span class="o">=</span>worker
+</span></code></pre></div>
 <h2 id="crear-un-daemonset-amb-fluentd">Crear un DaemonSet amb Fluentd</h2>
 <p>Un DaemonSet és un recurs de Kubernetes que s'assegura que a cada node del clúster es desplegui una còpia d'un pod. 
 S'utilitza per recol·lecció de logs, monitoratge de nodes o per executar processos relacionats amb volums, en segon pla. </p>
-<p><div class="highlight"><pre><span></span><code>apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: fluentd
-  namespace: default
-  labels:
-    app: fluentd
-spec:
-  selector:
-    matchLabels:
-      name: fluentd
-  template:
-    metadata:
-      labels:
-        name: fluentd
-    spec:
-      containers:
-      - name: fluentd
-        image: fluentd:latest
-</code></pre></div>
-kubectl apply -f daemonset.yaml
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DaemonSet</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd</span>
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluentd:latest</span>
+</span></code></pre></div>
+<p>kubectl apply -f daemonset.yaml
 kubectl get daemonsets
 kubectl get pods -n default -o wide</p>
 <h2 id="job">Job</h2>
 <p>Un Job és un recurs que pot crear 1 o més pods per executar tasques en paral.lel. S'utilitza en casos que es requereix executar processos
 batch, càlculs d'operacions que requereixen gran quantitat de recursos de computació. Alguns exemples són: càlculs de decimals del nombre pi,
 consultes a bases de dades, renderització, etc.</p>
-<p><div class="highlight"><pre><span></span><code>apiVersion: batch/v1
-kind: Job
-metadata:
-  name: my-job
-spec:
-  template:
-    metadata:
-      name: my-job
-    spec:
-      containers:
-      - name: containerjob
-        image: alpine
-        command:
-        - &quot;/bin/sh&quot;
-        - &quot;-c&quot;
-        args:
-        - |
-          apk --no-cache add ca-certificates curl jq
-          update-ca-certificates
-          curl -H &quot;Accept: application/json&quot; https://swapi.dev/api/people/?search=yoda | jq &#39;.results[] | { name, homeworld, species }&#39;
-      restartPolicy: Never
-</code></pre></div>
-kubectl apply -f job.yaml</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Job</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-job</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-job</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">containerjob</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alpine</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">        </span><span class="nt">command</span><span class="p">:</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;/bin/sh&quot;</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;-c&quot;</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">        </span><span class="nt">args</span><span class="p">:</span>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-3-18"><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">          </span><span class="no">apk --no-cache add ca-certificates curl jq</span>
+</span><span id="__span-3-19"><a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">          </span><span class="no">update-ca-certificates</span>
+</span><span id="__span-3-20"><a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="w">          </span><span class="no">curl -H &quot;Accept: application/json&quot; https://swapi.dev/api/people/?search=yoda | jq &#39;.results[] | { name, homeworld, species }&#39;</span>
+</span><span id="__span-3-21"><a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="w">      </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Never</span>
+</span></code></pre></div>
+<p>kubectl apply -f job.yaml</p>
 <h2 id="cronjob">Cronjob</h2>
 <p>Un Cronjob és similar a un Job, però que es planifica perquè es repeteixi periòdicament.</p>
-<p><div class="highlight"><pre><span></span><code>apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: hello
-spec:
-  schedule: &quot;*/1 * * * *&quot;
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-          - name: hello
-            image: busybox
-            args:
-            - /bin/sh
-            - -c
-            - date; echo Hello from the Kubernetes cluster
-          restartPolicy: OnFailure
-</code></pre></div>
-kubectl apply -f cronjob.yaml</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch/v1</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CronJob</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hello</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">  </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*/1</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*&quot;</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">  </span><span class="nt">jobTemplate</span><span class="p">:</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">      </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">        </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">          </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hello</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">            </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">            </span><span class="nt">args</span><span class="p">:</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/sh</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-c</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">date; echo Hello from the Kubernetes cluster</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">          </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OnFailure</span>
+</span></code></pre></div>
+<p>kubectl apply -f cronjob.yaml</p>
 <h2 id="configmap">ConfigMap</h2>
 <p>Un ConfigMap és un recurs de Kubernetes que permet emmagatzemar dades de configuració com ara variables d'entorn, nombre de ports, entre d'altres i poder-los aplicar en altres fitxers manifests.</p>
-<p><div class="highlight"><pre><span></span><code>apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: my-configmap
-data:
-  VARIABLE1: mongodb
-  VARIABLE2: redis
-</code></pre></div>
-kubectl apply -f config_map.yaml i després es pot referenciar la configuració a altres fitxers manifest.</p>
-<p><div class="highlight"><pre><span></span><code>  containers:
-  - name: container1
-    image: nginx:alpine
-    volumeMounts:
-    - name: config-volume
-      mountPath: /usr/share/nginx/html
-    envFrom:
-    - configMapRef:
-        name: my-configmap
-</code></pre></div>
-Es poden crear aplicant kubectl apply -f configmap.yaml (mode declaratiu) o bé a través de la línia de d'ordres com la majoria d'objectes de Kubernetes (mode imperatiu).</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-configmap</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="nt">data</span><span class="p">:</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">  </span><span class="nt">VARIABLE1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mongodb</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">  </span><span class="nt">VARIABLE2</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redis</span>
+</span></code></pre></div>
+<p>kubectl apply -f config_map.yaml i després es pot referenciar la configuració a altres fitxers manifest.</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">container1</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:alpine</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span><span class="nt">volumeMounts</span><span class="p">:</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config-volume</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">      </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/usr/share/nginx/html</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span><span class="nt">envFrom</span><span class="p">:</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">configMapRef</span><span class="p">:</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-configmap</span>
+</span></code></pre></div>
+<p>Es poden crear aplicant kubectl apply -f configmap.yaml (mode declaratiu) o bé a través de la línia de d'ordres com la majoria d'objectes de Kubernetes (mode imperatiu).</p>
 <h2 id="secret">Secret</h2>
 <p>Un Secret és un objecte de Kubernetes que s'utilitza per emmagatzemar informació confidencial, com contrasenyes o tokens d'una API. Es poden referenciar els seus valors com a variables d'entorn o bé muntar els seus valors en volums.</p>
 <p>Es pot codificar/decodificar:</p>
-<p><div class="highlight"><pre><span></span><code>echo -n &quot;Tyrion&quot; | base64
-echo -n &quot;VHlyaW9u&quot; | base64 --decode
-</code></pre></div>
-És important destacar, que no és una manera d'encriptar dades crítiques, s'utilitza més aviat per ofuscar la informació, representar dades en un conjunt estàndard de caràcters,
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;Tyrion&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nb">echo</span><span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;VHlyaW9u&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>--decode
+</span></code></pre></div>
+<p>És important destacar, que no és una manera d'encriptar dades crítiques, s'utilitza més aviat per ofuscar la informació, representar dades en un conjunt estàndard de caràcters,
 permetre incloure dades binàries o sensibles directament als manifests i és una manera estandarditzada de compartir informació, però es recomana afegir capes de seguretat
 per a dades delicades.</p>
-<p><div class="highlight"><pre><span></span><code>apiVersion: v1
-data:
-  username: VHlyaW9u
-  password: TGFubmlzdGVy
-kind: Secret
-metadata:
-  creationTimestamp: &quot;2023-11-27T19:32:18Z&quot;
-  name: my-secret
-  namespace: default
-  resourceVersion: &quot;49319&quot;
-  uid: f62ae573-a38e-4dc4-beae-198752c267de
-type: Opaque
-</code></pre></div>
-kubectl apply -f my-secret.yaml</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nt">data</span><span class="p">:</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">VHlyaW9u</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TGFubmlzdGVy</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="w">  </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2023-11-27T19:32:18Z&quot;</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-secret</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="w">  </span><span class="nt">resourceVersion</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;49319&quot;</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="w">  </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">f62ae573-a38e-4dc4-beae-198752c267de</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Opaque</span>
+</span></code></pre></div>
+<p>kubectl apply -f my-secret.yaml</p>
 <p>o bé de forma imperativa '''kubectl create secret generic my-secret --from-literal=username=my-username --from-literal=password=my-password -o yaml &gt;&gt; my-secret.yaml'''</p>
 <p>Una vegada es crea el secret es pot afegir als manifests yamls, com per exemple a un pod:</p>
-<div class="highlight"><pre><span></span><code>apiVersion: v1
-kind: Pod
-metadata:
-  name: my-pod
-spec:
-  containers:
-  - name: nginx
-    image: nginx:alpine
-    envFrom:    
-    - secretRef:
-        name: my-secret
-</code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-pod</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:alpine</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">    </span><span class="nt">envFrom</span><span class="p">:</span><span class="w">    </span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretRef</span><span class="p">:</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-secret</span>
+</span></code></pre></div>
 <h2 id="secret-encriptat-amb-kubeseal">Secret encriptat amb kubeseal</h2>
 <p>Com que els secrets estan codificats en base64, per afegir una capa extra de seguretat es poden
 encriptar amb eines com <a href="https://github.com/bitnami-labs/sealed-secrets" target="_blank">kubeseal</a>. </p>
 <p>Aquesta eina permet encriptar secrets amb un certificat, i després el mateix clúster s'encarrega de desencriptar-lo. Pot ser una bona pràctica quan es pengen secrets a repositoris (encara que siguin privats).</p>
 <p>Una vegada tenim descarregat el client i el Sealed Secrets Controller, podem crear un secret:</p>
-<div class="highlight"><pre><span></span><code>apiVersion: v1
-kind: Secret
-metadata:
-  creationTimestamp: null
-  name: my-secret-2
-  namespace: default
-data:
-  password: ZWxkZXNlbXByZQ==
-  username: MTIzNDU=
-</code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Secret</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-secret-2</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="nt">data</span><span class="p">:</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ZWxkZXNlbXByZQ==</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MTIzNDU=</span>
+</span></code></pre></div>
 <p>Obtenim la clau pública del certificat</p>
-<div class="highlight"><pre><span></span><code>kubeseal --fetch-cert &gt; public-key-cert.pem
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>kubeseal<span class="w"> </span>--fetch-cert<span class="w"> </span>&gt;<span class="w"> </span>public-key-cert.pem
+</span></code></pre></div>
 <p>Encriptem el fitxer yaml del secret</p>
-<div class="highlight"><pre><span></span><code>kubeseal --format=yaml --cert=public-key-cert.pem &lt; secret.yaml &gt; sealed-secret.yaml
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>kubeseal<span class="w"> </span>--format<span class="o">=</span>yaml<span class="w"> </span>--cert<span class="o">=</span>public-key-cert.pem<span class="w"> </span>&lt;<span class="w"> </span>secret.yaml<span class="w"> </span>&gt;<span class="w"> </span>sealed-secret.yaml
+</span></code></pre></div>
 <p>y quedaria de la següent manera:</p>
-<p><div class="highlight"><pre><span></span><code>apiVersion: bitnami.com/v1alpha1
-kind: SealedSecret
-metadata:
-  creationTimestamp: null
-  name: my-secret-2
-  namespace: default
-spec:
-  encryptedData:
-    password: AgAk4Jq54VeRuFhzGPO3784Nqx7iAPg8+gnMTM2dFHXFTg1RzNXOYg0kib7OWSq85rhhqXNpPiOLf9Ex5urT3xqnwcvcW4ZPA3ZOrYvm8lEc2M00PZlQVNEmNEt8aqDQ+8GaU2IUrspV5KJhuhq4MzlWRnxTfDmsQ1bxj/8k8jpX0knbLQ7+lvZAbGzXvqR0WDqw24wylqu3ZwtWCeJs4aif1WyOQUNNkx0NgzLkbVSpWm9Ri6523AkwZbbuLNdugZyBuDB+PO2fDM6eJ8pjLjqLH/RwCPFVvposuLlqGBzZqBE799C1mt6fVVTBaso8pPR6rW3CgA48ZzXLmAaXprJ3D/yJjL6KQnUX0TaasLiPPCxkGXqNmuKWVs6pCaQZSBT1lF1rFNQ2rG1GsimOr/ngfpyqZbqS7BJicYVRz01AtmTVuild8LxYXeGiMVo9wBSLOqc/UrTP95mjsWiGj6jnlXr1sJk8TZMTZMgBKqJZvOglRE5sxJp0JSVkpwj/PAajGYloLn9Ue7jXOw3frudnSpwoA7n6ZBmhiRODp6tji/m/CeSXplGyrlk3fDMcj+iqodfXa58FkFHC+TXRZuKEzxbSCKUzzT7B2NCeZcMNZEu/bo5Ys6N03VQKYq1g1IYhlGNPZTxZ3bLbPZtD0CnEvIDaUg+bTed0L+SSZ9Lx+qWsB9EhpITvsHxz8C5qZqNy9nP8CO3UgQnf
-    username: AgAc57N+49tg7RBHpSCf7Ped7ZAeEL3WJ3K7LfOzvp4iG2oeCRBrUt8bj99Im9s7laLzIs0vQQZFd17XqC08r4yFmHly/bezH4dAotVfzUpZ1gqTR63qfCE9YPX0TboaqKcnlYdDPZgt9qlIId1xc0PImVHQVr+6R421X90xkY8WhnXPlC1c8voiah34AuEfu+BDsY0OExDxoDcJYuTmlxFb75n7c5W+Zc3HO8SuwBIQVAcRL8m3NQelky9DTNMjvG5pMpLsAqstPu6rX8Lg0BvMzSG4ns3h97ao/H55rfJK5vBIK8UzMM9DkB2xTT+BN48NdNqHR6Szyc9qQLynuTczEIHh+LyhB31RsVp9Ogb4upuCaiJu2OrvrdKmsutiaT3qKq9qxtuBTX9jbe7mqZUZkY3JiPS/JiTsxKJwJdOJvMXByKkFUfijAaouXKByiaSdB2xjCuZ8Fnl4cu5kk71S/6B/ftcOFHrEyqiHPKh1WUkFi4qh5vOtyUtHNFlGGtnDXEiBv+R6j509lCclR05byLmfGMnjv7np6n86hjULcpPxqdi9B07sGIb1dGtu9MEi59v0EfenVvDZT88AlKd2Dl65sQyaNC2akwxTuop7wIQ+xrzyt5EFRsLin7TSN/w7HT1JXROJ2zLs5c92V/XkYsze23deexuuasfIt9Av6ytVGFug9xjRaTOpJeMX8A1lo5vaOQ==
-  template:
-    metadata:
-      creationTimestamp: null
-      name: my-secret-test
-      namespace: default
-</code></pre></div>
-kubectl delete -f secret.yaml</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bitnami.com/v1alpha1</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SealedSecret</span>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-secret-2</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">  </span><span class="nt">encryptedData</span><span class="p">:</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AgAk4Jq54VeRuFhzGPO3784Nqx7iAPg8+gnMTM2dFHXFTg1RzNXOYg0kib7OWSq85rhhqXNpPiOLf9Ex5urT3xqnwcvcW4ZPA3ZOrYvm8lEc2M00PZlQVNEmNEt8aqDQ+8GaU2IUrspV5KJhuhq4MzlWRnxTfDmsQ1bxj/8k8jpX0knbLQ7+lvZAbGzXvqR0WDqw24wylqu3ZwtWCeJs4aif1WyOQUNNkx0NgzLkbVSpWm9Ri6523AkwZbbuLNdugZyBuDB+PO2fDM6eJ8pjLjqLH/RwCPFVvposuLlqGBzZqBE799C1mt6fVVTBaso8pPR6rW3CgA48ZzXLmAaXprJ3D/yJjL6KQnUX0TaasLiPPCxkGXqNmuKWVs6pCaQZSBT1lF1rFNQ2rG1GsimOr/ngfpyqZbqS7BJicYVRz01AtmTVuild8LxYXeGiMVo9wBSLOqc/UrTP95mjsWiGj6jnlXr1sJk8TZMTZMgBKqJZvOglRE5sxJp0JSVkpwj/PAajGYloLn9Ue7jXOw3frudnSpwoA7n6ZBmhiRODp6tji/m/CeSXplGyrlk3fDMcj+iqodfXa58FkFHC+TXRZuKEzxbSCKUzzT7B2NCeZcMNZEu/bo5Ys6N03VQKYq1g1IYhlGNPZTxZ3bLbPZtD0CnEvIDaUg+bTed0L+SSZ9Lx+qWsB9EhpITvsHxz8C5qZqNy9nP8CO3UgQnf</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AgAc57N+49tg7RBHpSCf7Ped7ZAeEL3WJ3K7LfOzvp4iG2oeCRBrUt8bj99Im9s7laLzIs0vQQZFd17XqC08r4yFmHly/bezH4dAotVfzUpZ1gqTR63qfCE9YPX0TboaqKcnlYdDPZgt9qlIId1xc0PImVHQVr+6R421X90xkY8WhnXPlC1c8voiah34AuEfu+BDsY0OExDxoDcJYuTmlxFb75n7c5W+Zc3HO8SuwBIQVAcRL8m3NQelky9DTNMjvG5pMpLsAqstPu6rX8Lg0BvMzSG4ns3h97ao/H55rfJK5vBIK8UzMM9DkB2xTT+BN48NdNqHR6Szyc9qQLynuTczEIHh+LyhB31RsVp9Ogb4upuCaiJu2OrvrdKmsutiaT3qKq9qxtuBTX9jbe7mqZUZkY3JiPS/JiTsxKJwJdOJvMXByKkFUfijAaouXKByiaSdB2xjCuZ8Fnl4cu5kk71S/6B/ftcOFHrEyqiHPKh1WUkFi4qh5vOtyUtHNFlGGtnDXEiBv+R6j509lCclR05byLmfGMnjv7np6n86hjULcpPxqdi9B07sGIb1dGtu9MEi59v0EfenVvDZT88AlKd2Dl65sQyaNC2akwxTuop7wIQ+xrzyt5EFRsLin7TSN/w7HT1JXROJ2zLs5c92V/XkYsze23deexuuasfIt9Av6ytVGFug9xjRaTOpJeMX8A1lo5vaOQ==</span>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">      </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-secret-test</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">      </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+</span></code></pre></div>
+<p>kubectl delete -f secret.yaml</p>
 <p>kubectl apply -f sealed-secret.yaml</p>
 <p>A partir d'aquest moment es pot esborrar el secret i aplicar el secret encriptat. S'ha de tenir present que el secret i el secret sealed han d'estar en el mateix namespace.</p>
 <p>Finalment, quan es faci ús del secret sealed, el clúster, descodificarà automàticament les contrasenyes encriptades.</p>

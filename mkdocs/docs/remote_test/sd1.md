@@ -12,33 +12,33 @@ Desplegar un clúster de Kubernetes amb kubeadm.
 
 Canvi de nom del host
 
-```
-Modificar els fitxers /etc/hostname i /etc/hosts
+```bash
+# Modificar els fitxers /etc/hostname i /etc/hosts
 sudo hostnamectl set-hostname controlplane
 sudo systemctl restart systemd-hostnamed
 ```
 
 Inici de sessió via ssh amb la ip pública i la contrasenya inicial
 
-```
+```bash
 ssh root@your_server_ip
 ```
 
 Creació d'un nou usuari 
 
-```
+```bash
 adduser josan
 ```
 
 Afegir al nou usuari al grup sudo per ser administrador
 
-```
+```bash
 usermod -aG sudo josan
 ```
 
 Configurar el firewall ufw
 
-```
+```bash
 sudo ufw allow from ip
 ufw allow 22/tcp
 sudo ufw default deny incoming
@@ -49,7 +49,7 @@ ufw status numbered
 
 Accedir amb el nou usuari i contrasenya
 
-```
+```bash
 ssh josan@your_server_ip
 ```
 
@@ -57,7 +57,7 @@ Passos opcionals, per millorar la seguretat del servidor:
 
 Modificar el port ssh
 
-```
+```bash
 # vim nano /etc/ssh/sshd_config
 Port 2222
 sudo service sshd restart
@@ -68,20 +68,20 @@ sudo ufw reload
 
 En el client, generar parell de claus RSA
 
-```
+```bash
 ssh-keygen -t rsa -b 2048
 ```
 
 Copiar la clau pública al servidor públic
 
-```
+```bash
 ssh-copy-id usuario@direccion_ip -p port
 ssh -p '2222' 'josan@direccio_ip' 
 ```
 
 Configurar el servidor perquè només es pugui entrar amb clau RSA
 
-```
+```bash
 # vim nano /etc/ssh/sshd_config
 PermitRootLogin no
 PasswordAuthentication no
@@ -89,7 +89,7 @@ PasswordAuthentication no
 
 Altres mesures de seguretat que es poden configurar:
 
-```
+```bash
 # vim nano /etc/ssh/sshd_config
 LoginGraceTime 10m
 MaxAuthTries 1
@@ -103,7 +103,7 @@ Modificar els ports dels firewalls dels dos nodes:
 
 Al controlplane:
 
-```
+```bash
 sudo ufw allow 80/tcp
 sudo ufw allow out 80 o sudo ufw default allow outgoing
 sudo ufw allow 6443/tcp
@@ -115,7 +115,7 @@ sudo ufw allow 10257/tcp
 
 Al worker1:
 
-```
+```bash
 sudo ufw allow 10250/tcp
 sudo ufw allow 30000:32767/tcp
 ```
@@ -126,39 +126,39 @@ Instal.lació de k8s al controlplane:
 
 Mode root
 
-```
+```bash
 sudo -i
 ```
 
 Actualitzar el sistema
 
-```
+```bash
 apt update && apt upgrade -y
 ```
 
 Instal·lar paquets necessaris
 
-```
+```bash
 apt install curl apt-transport-https vim git wget \
 software-properties-common lsb-release ca-certificates -y
 ```
 
 Desactivar swap
 
-```
+```bash
 swapoff -a
 ```
 
 Carregar els següents mòduls:
 
-```
+```bash
 modprobe overlay
 modprobe br_netfilter
 ```
 
 Actualitzar el kernel per permetre el tràfic
 
-```
+```bash
 cat << EOF | tee /etc/sysctl.d/kubernetes.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
@@ -168,13 +168,13 @@ EOF
 
 Verificar que els canvis s'han realitzat
 
-```
+```bash
 sysctl --system
 ```
 
 Instal·lar la clau necessària per a la instal·lació
 
-```
+```bash
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
 | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -186,7 +186,7 @@ $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev
 
 Instal·lar containerd
 
-```
+```bash
 apt-get update && apt-get install containerd.io -y
 containerd config default | tee /etc/containerd/config.toml
 sed -e 's/SystemdCgroup = false/SystemdCgroup = true/g' -i /etc/containerd/config.toml
@@ -195,33 +195,33 @@ systemctl restart containerd
 
 Crear un nou repositori per a Kubernetes
 
-```
+```bash
 echo 'deb https://packages.cloud.google.com/apt kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list
 
 ```
 
 Afegir la clau GPG per als paquets:
 
-```
+```bash
 curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
 ```
 
 Actualitzar i instal·lar kubeadm, kubectl i kubelet
 
-```
+```bash
 apt update -y
 apt install kubeadm kubectl kubelet
 ```
 
 Configurar els paquets perquè no s'actualitzin
 
-```
+```bash
 apt-mark hold kubelet kubeadm kubectl
 ```
 
 Afegir un DNS local al servidor controlplane
 
-```
+```bash
 # editar /etc/hosts
 
 172.16.2.5  controlplane
@@ -229,7 +229,7 @@ Afegir un DNS local al servidor controlplane
 
 Crear un fitxer de configuració pel clúster
 
-```
+```yaml
 # vim kubeadm-config.yaml
 
 apiVersion: kubeadm.k8s.io/v1beta3
@@ -242,13 +242,13 @@ networking:
 
 Inicialitzar el node controlplane
 
-```
+```bash
 kubeadm init --config=kubeadm-config.yaml --upload-certs | tee kubeadm-init.out
 ```
 
 Logout root i configurar l'usuari com administrado del clúster
 
-```
+```bash
 exit
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -258,7 +258,7 @@ less $HOME/.kube/config
 
 Instal·lar el gestor de paquets Helm
 
-```
+```bash
 wget https://get.helm.sh/helm-v3.13.2-linux-amd64.tar.gz
 tar -zxvf helm-v3.13.2-linux-amd64.tar.gz
 mv linux-amd64/helm /usr/local/bin/helm
@@ -266,7 +266,7 @@ mv linux-amd64/helm /usr/local/bin/helm
 
 Seleccionar un pod de xarxa per al CNI (Container Networking Interface) hi ha diversos, Cilium o Calico són bastant populars.
 
-```
+```bash
 helm repo add cilium https://helm.cilium.io/
 helm repo update
 helm template cilium cilium/cilium --namespace kube-system > cilium.yaml
@@ -275,7 +275,7 @@ kubectl apply -f cilium.yaml
 
 Instal·lar autocompletat
 
-```
+```bash
 sudo apt-get install bash-completion -y
 source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> $HOME/.bashrc
@@ -287,39 +287,39 @@ Repetir els mateixos passos que al node anterior des de l'inici fins a afegir un
 
 Mode root
 
-```
+```bash
 sudo -i
 ```
 
 Actualitzar el sistema
 
-```
+```bash
 apt update && apt upgrade -y
 ```
 
 Instal·lar paquets necessaris
 
-```
+```bash
 apt install curl apt-transport-https vim git wget \
 software-properties-common lsb-release ca-certificates -y
 ```
 
 Desactivar swap
 
-```
+```bash
 swapoff -a
 ```
 
 Carregar els següents mòduls
 
-```
+```bash
 modprobe overlay
 modprobe br_netfilter
 ```
 
 Actualitzar el kernel per permetre el tràfic
 
-```
+```bash
 cat << EOF | tee /etc/sysctl.d/kubernetes.conf
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
@@ -329,13 +329,13 @@ EOF
 
 Verificar que els canvis s'han realitzat
 
-```
+```bash
 sysctl --system
 ```
 
 Instal·lar la clau necessària per a la instal·lació
 
-```
+```bash
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
 | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -347,7 +347,7 @@ $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev
 
 Install containerd
 
-```
+```bash
 apt-get update && apt-get install containerd.io -y
 containerd config default | tee /etc/containerd/config.toml
 sed -e 's/SystemdCgroup = false/SystemdCgroup = true/g' -i /etc/containerd/config.toml
@@ -356,52 +356,53 @@ systemctl restart containerd
 
 Crear un nou repositori per a Kubernetes
 
-```
+```bash
 echo 'deb https://packages.cloud.google.com/apt kubernetes-xenial main' > /etc/apt/sources.list.d/kubernetes.list
 
 ```
 
 Afegir la clau GPG per als paquets:
 
-```
+```bash
 curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
 ```
 
 Actualitzar i instal·lar kubeadm, kubectl i kubelet
 
-```
+```bash
 apt update -y
 apt install kubeadm kubectl kubelet
 ```
 
 Configurar els paquets perquè no s'actualitzin
 
-```
+```bash
 apt-mark hold kubelet kubeadm kubectl
 ```
 
 Afegir un DNS local al servidor worker1
 
-```
+```bash
 # editar /etc/hosts
 172.16.3.5  worker1
 172.16.2.5  controlplane
 ```
 
 Per unir el worker al clúster del controlplane es pot utilitzar la instrucció join amb el token inicial que mostra la primera vegada el controlplane o bé generar un nou token
-```
+
+```bash
 sudo kubeadm token list
 ```
 
 Creació d'un nou token (al controlplane)
 
-```
+```bash
 sudo kubeadm token create
 ```
 
 Generació del discovery token CA cert hash per permetre la unió del node worker
 
-```
+```bash
 openssl x509 -pubkey \
 -in /etc/kubernetes/pki/ca.crt | openssl rsa \
 -pubin -outform der 2>/dev/null | openssl dgst \
@@ -410,7 +411,7 @@ openssl x509 -pubkey \
 
 Utilitzar el token i el discovery token al worker node
 
-```
+```bash
 sudo -i
 kubeadm join --token 27eee4.6e66ff60318da929 controlplane:6443 \
 --discovery-token-ca-cert-hash sha256:6d541678b05652e1fa5d43908e75e67376e994c3483d6683f2a18673e5d2a1b0
@@ -418,26 +419,26 @@ kubeadm join --token 27eee4.6e66ff60318da929 controlplane:6443 \
 
 Anar al controlplane i verificar que tot funciona correctament
 
-```
+```bash
 kubectl get node
 kubectl describe node controlplane
 ```
 
 Permetre que controlplane pugui contenir pods que no siguin del sistema
 
-```
+```bash
 kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 ```
 
 Verificar que cilium i coredns funcionen correctament
 
-```
+```bash
 kubectl get pods --all-namespaces
 ```
 
 Actualització de crictl
 
-```
+```bash
 sudo crictl config --set \
 runtime-endpoint=unix:///run/containerd/containerd.sock \
 --set image-endpoint=unix:///run/containerd/containerd.sock
@@ -446,7 +447,7 @@ sudo cat /etc/crictl.yaml
 ```
 ### Nginx Ingress Controller 
 
-```
+```bash
 # Instal·lació per entorns baremetal
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.3/deploy/static/provider/baremetal/deploy.yaml
 kubectl get pods -n ingress-nginx
@@ -462,7 +463,7 @@ curl <worker-external-ip>:<node-port>
 
 ### Kubernetes Ingress
 
-```
+```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -499,7 +500,7 @@ spec:
 
 Exemple: docs-deployment.yaml
 
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -539,7 +540,7 @@ Opcionalment es pot configurar i apuntar subdominis a la ip de worker1
 
 Exemple:
 
-```
+```bash
 A     cluster.test              ip-del-servidor
 A     docs.cluster.test         ip-del-servidor
 A     chat-ai.cluster.test      ip-del-servidor
@@ -561,7 +562,7 @@ per la simplicitat per realitzar la configuració.
 
 Instal·lació de Caddy
 
-```
+```bash
 wget -P /tmp https://github.com/caddyserver/caddy/releases/download/v2.7.6/caddy_2.7.6_linux_amd64.tar.gz \
 && sudo chmod +x /tmp/caddy_2.7.6_linux_amd64.tar.gz && sudo tar -xzvf /tmp/caddy_2.7.6_linux_amd64.tar.gz \
 && sudo mv caddy /usr/local/bin/
@@ -571,7 +572,7 @@ wget -P /tmp https://github.com/caddyserver/caddy/releases/download/v2.7.6/caddy
 
 Cofiguració de Caddyfile
 
-```
+```bash
 #/etc/caddy/Caddyfile
 docs.josanesc.com {
     reverse_proxy ip_node:NodePort
@@ -596,7 +597,7 @@ k8s-tfg.josanesc.com {
 
 Crear un servei systemd per a caddy
 
-```
+```bash
 sudo nano /lib/systemd/system/caddy.service
 
 [Unit]
@@ -622,7 +623,7 @@ AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
 WantedBy=multi-user.target
 ```
 
-```
+```bash
 sudo systemctl daemon-reload
 sudo systemctl enable caddy
 sudo systemctl start caddy

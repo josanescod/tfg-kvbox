@@ -11,7 +11,7 @@ desplegar un pod i un servei de tipos NodePort dins d'un cúster de K3s.
 
 ## Creació de l'estructura de fitxers amb el contenidor squidfunk/mkdocs-material
 
-```
+```bash
 docker run --rm -it -p 8000:8000 -v "$PWD":/docs squidfunk/mkdocs-material new .
 
 ```
@@ -22,13 +22,13 @@ Creació del contingut en els fitxers md i el fitxer de configuració mkdocs.yml
 
 ## Generació de la documentació
 
-```
+```bash
 docker run --rm -it -v "$PWD":/docs squidfunk/mkdocs-material build
 ```
 
 ## Creació d'un fitxer manifest per a kubernetes amb un Servei per exposar l'aplicació dins d'un cluster de k3s
 
-```
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -68,7 +68,6 @@ spec:
 
 ## Comanda per desplegar el servei
 
-```
-kubectl apply -f docu_service.yaml 
-    
+```bash
+kubectl apply -f docu_service.yaml     
 ```

@@ -685,197 +685,197 @@
 <h2 id="installacio-pas-a-pas-de-kubernetes-amb-kubeadm">Instal·lació pas a pas de kubernetes amb kubeadm</h2>
 <h3 id="controlplane">Controlplane</h3>
 <p>Mode root</p>
-<div class="highlight"><pre><span></span><code>sudo -i
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>-i
+</span></code></pre></div>
 <p>Actualitzar el sistema</p>
-<div class="highlight"><pre><span></span><code>apt update &amp;&amp; apt upgrade -y
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt<span class="w"> </span>upgrade<span class="w"> </span>-y
+</span></code></pre></div>
 <p>Instal·lar paquets necessaris</p>
-<div class="highlight"><pre><span></span><code>apt install curl apt-transport-https vim git wget \
-software-properties-common lsb-release ca-certificates -y
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>apt<span class="w"> </span>install<span class="w"> </span>curl<span class="w"> </span>apt-transport-https<span class="w"> </span>vim<span class="w"> </span>git<span class="w"> </span>wget<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>software-properties-common<span class="w"> </span>lsb-release<span class="w"> </span>ca-certificates<span class="w"> </span>-y
+</span></code></pre></div>
 <p>Desactivar swap</p>
-<div class="highlight"><pre><span></span><code>swapoff -a
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>swapoff<span class="w"> </span>-a
+</span></code></pre></div>
 <p>Carregar els següents mòduls:</p>
-<div class="highlight"><pre><span></span><code>modprobe overlay
-modprobe br_netfilter
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>modprobe<span class="w"> </span>overlay
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>modprobe<span class="w"> </span>br_netfilter
+</span></code></pre></div>
 <p>Actualitzar el kernel per permetre el tràfic</p>
-<div class="highlight"><pre><span></span><code>cat &lt;&lt; EOF | tee /etc/sysctl.d/kubernetes.conf
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-net.ipv4.ip_forward = 1
-EOF
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | tee /etc/sysctl.d/kubernetes.conf</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="s">net.bridge.bridge-nf-call-ip6tables = 1</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="s">net.bridge.bridge-nf-call-iptables = 1</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="s">net.ipv4.ip_forward = 1</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="s">EOF</span>
+</span></code></pre></div>
 <p>Verificar que els canvis s'han realitzat</p>
-<div class="highlight"><pre><span></span><code>sysctl --system
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sysctl<span class="w"> </span>--system
+</span></code></pre></div>
 <p>Instal·lar la clau necessària per a la instal·lació</p>
-<div class="highlight"><pre><span></span><code>sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
-| sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-echo \ &quot;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-https://download.docker.com/linux/ubuntu \
-$(lsb_release -cs) stable&quot; | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/apt/keyrings
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://download.docker.com/linux/ubuntu/gpg<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>gpg<span class="w"> </span>--dearmor<span class="w"> </span>-o<span class="w"> </span>/etc/apt/keyrings/docker.gpg
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="nb">echo</span><span class="w"> </span><span class="se">\ </span><span class="s2">&quot;deb [arch=</span><span class="k">$(</span>dpkg<span class="w"> </span>--print-architecture<span class="k">)</span><span class="s2"> signed-by=/etc/apt/keyrings/docker.gpg] \</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="s2">https://download.docker.com/linux/ubuntu \</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="k">$(</span>lsb_release<span class="w"> </span>-cs<span class="k">)</span><span class="s2"> stable&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/apt/sources.list.d/docker.list<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+</span></code></pre></div>
 <p>Instal·lar containerd</p>
-<div class="highlight"><pre><span></span><code>apt-get update &amp;&amp; apt-get install containerd.io -y
-containerd config default | tee /etc/containerd/config.toml
-sed -e &#39;s/SystemdCgroup = false/SystemdCgroup = true/g&#39; -i /etc/containerd/config.toml
-systemctl restart containerd
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>containerd.io<span class="w"> </span>-y
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>containerd<span class="w"> </span>config<span class="w"> </span>default<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/etc/containerd/config.toml
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>sed<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/SystemdCgroup = false/SystemdCgroup = true/g&#39;</span><span class="w"> </span>-i<span class="w"> </span>/etc/containerd/config.toml
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>systemctl<span class="w"> </span>restart<span class="w"> </span>containerd
+</span></code></pre></div>
 <p>Crear un nou repositori per a Kubernetes</p>
-<div class="highlight"><pre><span></span><code>echo &#39;deb https://packages.cloud.google.com/apt kubernetes-xenial main&#39; &gt; /etc/apt/sources.list.d/kubernetes.list
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;deb https://packages.cloud.google.com/apt kubernetes-xenial main&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/etc/apt/sources.list.d/kubernetes.list
+</span></code></pre></div>
 <p>Afegir la clau GPG per als paquets:</p>
-<div class="highlight"><pre><span></span><code>curl -fsSL &quot;https://packages.cloud.google.com/apt/doc/apt-key.gpg&quot; | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span><span class="s2">&quot;https://packages.cloud.google.com/apt/doc/apt-key.gpg&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>gpg<span class="w"> </span>--dearmor<span class="w"> </span>-o<span class="w"> </span>/etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
+</span></code></pre></div>
 <p>Actualitzar i instal·lar kubeadm, kubectl i kubelet</p>
-<div class="highlight"><pre><span></span><code>apt update -y
-apt install kubeadm kubectl kubelet
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>apt<span class="w"> </span>update<span class="w"> </span>-y
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>apt<span class="w"> </span>install<span class="w"> </span>kubeadm<span class="w"> </span>kubectl<span class="w"> </span>kubelet
+</span></code></pre></div>
 <p>Configurar els paquets perquè no s'actualitzin</p>
-<div class="highlight"><pre><span></span><code>apt-mark hold kubelet kubeadm kubectl
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>apt-mark<span class="w"> </span>hold<span class="w"> </span>kubelet<span class="w"> </span>kubeadm<span class="w"> </span>kubectl
+</span></code></pre></div>
 <p>Afegir un DNS local al servidor controlplane</p>
-<div class="highlight"><pre><span></span><code># editar /etc/hosts
-
-172.16.2.5  controlplane
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># editar /etc/hosts</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="m">172</span>.16.2.5<span class="w">  </span>controlplane
+</span></code></pre></div>
 <p>Crear un fitxer de configuració pel clúster</p>
-<div class="highlight"><pre><span></span><code># vim kubeadm-config.yaml
-
-apiVersion: kubeadm.k8s.io/v1beta3
-kind: ClusterConfiguration
-kubernetesVersion: 1.28.2
-controlPlaneEndpoint: &quot;controlplane:6443&quot;
-networking:
-  podSubnet: 172.16.2.0/24 
-</code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># vim kubeadm-config.yaml</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubeadm.k8s.io/v1beta3</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterConfiguration</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="nt">kubernetesVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.28.2</span>
+</span><span id="__span-14-6"><a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="nt">controlPlaneEndpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;controlplane:6443&quot;</span>
+</span><span id="__span-14-7"><a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="nt">networking</span><span class="p">:</span>
+</span><span id="__span-14-8"><a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">  </span><span class="nt">podSubnet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">172.16.2.0/24</span><span class="w"> </span>
+</span></code></pre></div>
 <p>Inicialitzar el node controlplane</p>
-<div class="highlight"><pre><span></span><code>kubeadm init --config=kubeadm-config.yaml --upload-certs | tee kubeadm-init.out
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>kubeadm<span class="w"> </span>init<span class="w"> </span>--config<span class="o">=</span>kubeadm-config.yaml<span class="w"> </span>--upload-certs<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>kubeadm-init.out
+</span></code></pre></div>
 <p>Logout root i configurar l'usuari com administrado del clúster</p>
-<div class="highlight"><pre><span></span><code>exit
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-less $HOME/.kube/config
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nb">exit</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span><span class="nv">$HOME</span>/.kube
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>sudo<span class="w"> </span>cp<span class="w"> </span>-i<span class="w"> </span>/etc/kubernetes/admin.conf<span class="w"> </span><span class="nv">$HOME</span>/.kube/config
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>sudo<span class="w"> </span>chown<span class="w"> </span><span class="k">$(</span>id<span class="w"> </span>-u<span class="k">)</span>:<span class="k">$(</span>id<span class="w"> </span>-g<span class="k">)</span><span class="w"> </span><span class="nv">$HOME</span>/.kube/config
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>less<span class="w"> </span><span class="nv">$HOME</span>/.kube/config
+</span></code></pre></div>
 <p>Instal·lar el gestor de paquets Helm</p>
-<div class="highlight"><pre><span></span><code>wget https://get.helm.sh/helm-v3.13.2-linux-amd64.tar.gz
-tar -zxvf helm-v3.13.2-linux-amd64.tar.gz
-mv linux-amd64/helm /usr/local/bin/helm
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>wget<span class="w"> </span>https://get.helm.sh/helm-v3.13.2-linux-amd64.tar.gz
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>tar<span class="w"> </span>-zxvf<span class="w"> </span>helm-v3.13.2-linux-amd64.tar.gz
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>mv<span class="w"> </span>linux-amd64/helm<span class="w"> </span>/usr/local/bin/helm
+</span></code></pre></div>
 <p>Seleccionar un pod de xarxa per al CNI (Container Networking Interface) hi ha diversos, Cilium o Calico són bastant populars.</p>
-<div class="highlight"><pre><span></span><code>helm repo add cilium https://helm.cilium.io/
-helm repo update
-helm template cilium cilium/cilium --namespace kube-system &gt; cilium.yaml
-kubectl apply -f cilium.yaml
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>cilium<span class="w"> </span>https://helm.cilium.io/
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>update
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>helm<span class="w"> </span>template<span class="w"> </span>cilium<span class="w"> </span>cilium/cilium<span class="w"> </span>--namespace<span class="w"> </span>kube-system<span class="w"> </span>&gt;<span class="w"> </span>cilium.yaml
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>cilium.yaml
+</span></code></pre></div>
 <p>Instal·lar autocompletat</p>
-<div class="highlight"><pre><span></span><code>sudo apt-get install bash-completion -y
-source &lt;(kubectl completion bash)
-echo &quot;source &lt;(kubectl completion bash)&quot; &gt;&gt; $HOME/.bashrc
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>bash-completion<span class="w"> </span>-y
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="nb">source</span><span class="w"> </span>&lt;<span class="o">(</span>kubectl<span class="w"> </span>completion<span class="w"> </span>bash<span class="o">)</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;source &lt;(kubectl completion bash)&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="nv">$HOME</span>/.bashrc
+</span></code></pre></div>
 <h3 id="worker1">Worker1</h3>
 <p>Repetir els mateixos passos que al node anterior des de l'inici fins a afegir un DNS local al node worker</p>
 <p>Mode root</p>
-<div class="highlight"><pre><span></span><code>sudo -i
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>sudo<span class="w"> </span>-i
+</span></code></pre></div>
 <p>Actualitzar el sistema</p>
-<div class="highlight"><pre><span></span><code>apt update &amp;&amp; apt upgrade -y
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt<span class="w"> </span>upgrade<span class="w"> </span>-y
+</span></code></pre></div>
 <p>Instal·lar paquets necessaris</p>
-<div class="highlight"><pre><span></span><code>apt install curl apt-transport-https vim git wget \
-software-properties-common lsb-release ca-certificates -y
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>apt<span class="w"> </span>install<span class="w"> </span>curl<span class="w"> </span>apt-transport-https<span class="w"> </span>vim<span class="w"> </span>git<span class="w"> </span>wget<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>software-properties-common<span class="w"> </span>lsb-release<span class="w"> </span>ca-certificates<span class="w"> </span>-y
+</span></code></pre></div>
 <p>Desactivar swap</p>
-<div class="highlight"><pre><span></span><code>swapoff -a
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>swapoff<span class="w"> </span>-a
+</span></code></pre></div>
 <p>Carregar els següents mòduls</p>
-<div class="highlight"><pre><span></span><code>modprobe overlay
-modprobe br_netfilter
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>modprobe<span class="w"> </span>overlay
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>modprobe<span class="w"> </span>br_netfilter
+</span></code></pre></div>
 <p>Actualitzar el kernel per permetre el tràfic</p>
-<div class="highlight"><pre><span></span><code>cat &lt;&lt; EOF | tee /etc/sysctl.d/kubernetes.conf
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-net.ipv4.ip_forward = 1
-EOF
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>cat<span class="w"> </span><span class="s">&lt;&lt; EOF | tee /etc/sysctl.d/kubernetes.conf</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="s">net.bridge.bridge-nf-call-ip6tables = 1</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="s">net.bridge.bridge-nf-call-iptables = 1</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="s">net.ipv4.ip_forward = 1</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="s">EOF</span>
+</span></code></pre></div>
 <p>Verificar que els canvis s'han realitzat</p>
-<div class="highlight"><pre><span></span><code>sysctl --system
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>sysctl<span class="w"> </span>--system
+</span></code></pre></div>
 <p>Instal·lar la clau necessària per a la instal·lació</p>
-<div class="highlight"><pre><span></span><code>sudo mkdir -p /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
-| sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
-echo \ &quot;deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-https://download.docker.com/linux/ubuntu \
-$(lsb_release -cs) stable&quot; | sudo tee /etc/apt/sources.list.d/docker.list &gt; /dev/null
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>sudo<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/etc/apt/keyrings
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://download.docker.com/linux/ubuntu/gpg<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>gpg<span class="w"> </span>--dearmor<span class="w"> </span>-o<span class="w"> </span>/etc/apt/keyrings/docker.gpg
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="nb">echo</span><span class="w"> </span><span class="se">\ </span><span class="s2">&quot;deb [arch=</span><span class="k">$(</span>dpkg<span class="w"> </span>--print-architecture<span class="k">)</span><span class="s2"> signed-by=/etc/apt/keyrings/docker.gpg] \</span>
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="s2">https://download.docker.com/linux/ubuntu \</span>
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="k">$(</span>lsb_release<span class="w"> </span>-cs<span class="k">)</span><span class="s2"> stable&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/apt/sources.list.d/docker.list<span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+</span></code></pre></div>
 <p>Install containerd</p>
-<div class="highlight"><pre><span></span><code>apt-get update &amp;&amp; apt-get install containerd.io -y
-containerd config default | tee /etc/containerd/config.toml
-sed -e &#39;s/SystemdCgroup = false/SystemdCgroup = true/g&#39; -i /etc/containerd/config.toml
-systemctl restart containerd
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>containerd.io<span class="w"> </span>-y
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>containerd<span class="w"> </span>config<span class="w"> </span>default<span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>/etc/containerd/config.toml
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>sed<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;s/SystemdCgroup = false/SystemdCgroup = true/g&#39;</span><span class="w"> </span>-i<span class="w"> </span>/etc/containerd/config.toml
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>systemctl<span class="w"> </span>restart<span class="w"> </span>containerd
+</span></code></pre></div>
 <p>Crear un nou repositori per a Kubernetes</p>
-<div class="highlight"><pre><span></span><code>echo &#39;deb https://packages.cloud.google.com/apt kubernetes-xenial main&#39; &gt; /etc/apt/sources.list.d/kubernetes.list
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;deb https://packages.cloud.google.com/apt kubernetes-xenial main&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/etc/apt/sources.list.d/kubernetes.list
+</span></code></pre></div>
 <p>Afegir la clau GPG per als paquets:</p>
-<div class="highlight"><pre><span></span><code>curl -fsSL &quot;https://packages.cloud.google.com/apt/doc/apt-key.gpg&quot; | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span><span class="s2">&quot;https://packages.cloud.google.com/apt/doc/apt-key.gpg&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>gpg<span class="w"> </span>--dearmor<span class="w"> </span>-o<span class="w"> </span>/etc/apt/trusted.gpg.d/kubernetes-archive-keyring.gpg
+</span></code></pre></div>
 <p>Actualitzar i instal·lar kubeadm, kubectl i kubelet</p>
-<div class="highlight"><pre><span></span><code>apt update -y
-apt install kubeadm kubectl kubelet
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>apt<span class="w"> </span>update<span class="w"> </span>-y
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>apt<span class="w"> </span>install<span class="w"> </span>kubeadm<span class="w"> </span>kubectl<span class="w"> </span>kubelet
+</span></code></pre></div>
 <p>Configurar els paquets perquè no s'actualitzin</p>
-<div class="highlight"><pre><span></span><code>apt-mark hold kubelet kubeadm kubectl
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>apt-mark<span class="w"> </span>hold<span class="w"> </span>kubelet<span class="w"> </span>kubeadm<span class="w"> </span>kubectl
+</span></code></pre></div>
 <p>Afegir un DNS local al servidor worker1</p>
-<div class="highlight"><pre><span></span><code># editar /etc/hosts
-172.16.3.5  worker1
-172.16.2.5  controlplane
-</code></pre></div>
-<p>Per unir el worker al clúster del controlplane es pot utilitzar la instrucció join amb el token inicial que mostra la primera vegada el controlplane o bé generar un nou token
-<div class="highlight"><pre><span></span><code>sudo kubeadm token list
-</code></pre></div></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c1"># editar /etc/hosts</span>
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="m">172</span>.16.3.5<span class="w">  </span>worker1
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="m">172</span>.16.2.5<span class="w">  </span>controlplane
+</span></code></pre></div>
+<p>Per unir el worker al clúster del controlplane es pot utilitzar la instrucció join amb el token inicial que mostra la primera vegada el controlplane o bé generar un nou token</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>sudo<span class="w"> </span>kubeadm<span class="w"> </span>token<span class="w"> </span>list
+</span></code></pre></div>
 <p>Creació d'un nou token (al controlplane)</p>
-<div class="highlight"><pre><span></span><code>sudo kubeadm token create
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>sudo<span class="w"> </span>kubeadm<span class="w"> </span>token<span class="w"> </span>create
+</span></code></pre></div>
 <p>Generació del discovery token CA cert hash per permetre la unió del node worker</p>
-<div class="highlight"><pre><span></span><code>openssl x509 -pubkey \
--in /etc/kubernetes/pki/ca.crt | openssl rsa \
--pubin -outform der 2&gt;/dev/null | openssl dgst \
--sha256 -hex | sed &#39;s/^.* //&#39;
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a>openssl<span class="w"> </span>x509<span class="w"> </span>-pubkey<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>-in<span class="w"> </span>/etc/kubernetes/pki/ca.crt<span class="w"> </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>rsa<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>-pubin<span class="w"> </span>-outform<span class="w"> </span>der<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>dgst<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>-sha256<span class="w"> </span>-hex<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/^.* //&#39;</span>
+</span></code></pre></div>
 <p>Utilitzar el token i el discovery token al worker node</p>
-<div class="highlight"><pre><span></span><code>sudo -i
-kubeadm join --token token_exemple controlplane:6443 \
---discovery-token-ca-cert-hash sha256:hash_exemple
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>sudo<span class="w"> </span>-i
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>kubeadm<span class="w"> </span>join<span class="w"> </span>--token<span class="w"> </span>token_exemple<span class="w"> </span>controlplane:6443<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>--discovery-token-ca-cert-hash<span class="w"> </span>sha256:hash_exemple
+</span></code></pre></div>
 <p>Anar al controlplane i verificar que tot funciona correctament</p>
-<div class="highlight"><pre><span></span><code>kubectl get node
-kubectl describe node controlplane
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>node
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>node<span class="w"> </span>controlplane
+</span></code></pre></div>
 <p>Permetre que controlplane pugui contenir pods que no siguin del sistema</p>
-<div class="highlight"><pre><span></span><code>kubectl taint nodes --all node-role.kubernetes.io/control-plane-
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>kubectl<span class="w"> </span>taint<span class="w"> </span>nodes<span class="w"> </span>--all<span class="w"> </span>node-role.kubernetes.io/control-plane-
+</span></code></pre></div>
 <p>Verificar que cilium i coredns funcionen correctament</p>
-<div class="highlight"><pre><span></span><code>kubectl get pods --all-namespaces
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--all-namespaces
+</span></code></pre></div>
 <p>Actualització de crictl</p>
-<div class="highlight"><pre><span></span><code>sudo crictl config --set \
-runtime-endpoint=unix:///run/containerd/containerd.sock \
---set image-endpoint=unix:///run/containerd/containerd.sock
-
-sudo cat /etc/crictl.yaml
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>sudo<span class="w"> </span>crictl<span class="w"> </span>config<span class="w"> </span>--set<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>runtime-endpoint<span class="o">=</span>unix:///run/containerd/containerd.sock<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>--set<span class="w"> </span>image-endpoint<span class="o">=</span>unix:///run/containerd/containerd.sock
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>
+</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>sudo<span class="w"> </span>cat<span class="w"> </span>/etc/crictl.yaml
+</span></code></pre></div>
 
 
 

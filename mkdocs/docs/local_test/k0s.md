@@ -11,7 +11,7 @@ Persistent Volume Claim.
 
 ## Creació del clúster
 
-```
+```bash
 # control plane
 mkdir -p /etc/k0s
 k0s config create > /etc/k0s/k0s.yaml
@@ -20,7 +20,7 @@ sudo k0s start
 sudo k0s token create --role=worker
 
 # worker
-copiar el token a un fitxer token.txt
+#copiar el token a un fitxer token.txt
 sudo k0s install worker --token-file token.txt
 sudo k0s start
 
@@ -40,7 +40,7 @@ Per la instal·lació m'he basat en dues fonts:
 * la documentació oficial de k0s: [Installing NGINX Ingress Controller](https://docs.k0sproject.io/v1.28.4+k0s.0/examples/nginx-ingress/){:target="_blank"} 
 * la guia d'instal·lació del repositori de ingress-nginx: [Installation Guide](https://kubernetes.github.io/ingress-nginx/deploy/){:target="_blank"}.
 
-```
+```bash
 # Instal·lació per entorns baremetal
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.3/deploy/static/provider/baremetal/deploy.yaml
 kubectl get pods -n ingress-nginx
@@ -58,7 +58,7 @@ curl <worker-external-ip>:<node-port>
 
 Ingress és un recurs de Kubernetes que permet exposar i gestionar sol·licituds a diferents serveis segons el seu URL. 
 
-```
+```yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -103,7 +103,7 @@ spec:
 Un Persistence Volume és un recurs de Kubernetes que representa un volum d'emmagatzematge persistent, com un disc o espai d'emmagatzematge al núvol.
 És una abstracció que permet a les aplicacions sol·licitar espai d'emmagatzematge.
 
-```
+```yaml
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -122,7 +122,7 @@ spec:
 
 Un Persistence Volume Claim és un objecte de Kubernetes que representa una sol·licitud de recursos d'emmagatzematge. Ha d'haver-hi un PV per poder vincular un PVC.
 
-```
+```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -141,7 +141,7 @@ spec:
 2. Es defineix un Persistent Volume Claim 'my-pvc'
 3. Un deployment pot utilitzar un pvc a través d'un volum 'my-storage'
 
-```
+```yaml
 apiVersion: v1
 kind: PersistentVolume
 metadata:

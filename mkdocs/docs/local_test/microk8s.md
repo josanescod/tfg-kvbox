@@ -12,7 +12,7 @@ Crear un clúster amb microk8s i provar diverses funcionalitats:
 
 Al servidor controlplane:
 
-```
+```bash
 microk8s start
 microk8s enable hostpath-storage
 microk8s enable dns
@@ -23,7 +23,7 @@ La instrucció microk8s add-node generarà un token per executar al segon servid
 
 Al servidor worker1:
 
-```
+```bash
 microk8s join 172.16.2.5:25000/{token} --worker
 ```
 
@@ -34,7 +34,7 @@ persistència de dades, i mantenen un ordre a l'hora de desplegar-se, esborrar-s
 
 Estan formats per tres components, un Headless Service que és un tipus de servei que no assigna direccions IP virtuals a un conjunt de pods. Els pods, i els persistent volume claims i els persistent volums, els objectes involucrats en la persistència de dades.
 
-```
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -89,23 +89,23 @@ Helm és un gestor de paquets per a Kubernetes. Els seus paquets s'anomenen char
 
 ### Instal·lació d'una aplicació amb Helm
 
-```
+```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm show values bitnami/wordpress
 ```
 
 Modificar els valors que siguin necessaris passant la configuració en un fitxer values.yaml
 
-```
+```bash
 wordpressUsername: admin
 wordpressPassword: wordpress
 ```
 
-```
+```bash
 helm install my-wordpress -f values.yaml bitnami/wordpress --version 18.1.19
 ```
 
-```
+```bash
 kubectl port-forward --address 0.0.0.0 service/my-wordpress 7000:8080
 ```
 
@@ -117,13 +117,13 @@ Els passos a seguir són:
 
 * Creació d'una carpeta per al projecte
 
-```
+```bash
 mkdir my-chart
 ```
 
 * Dins de la carpeta executar helm create 'nom de l'aplicació'
 
-```
+```bash
 helm create graph-solver
 ```
 
@@ -143,14 +143,14 @@ A la carpeta de templates/tests tamb es pot esborrar el contigut.
 
 values.yaml: es pot esborrar el contigut i afegir els valors per defecte de les claus dels manifests que els usuaris podràn modificar.
 
-```
+```yaml
 ReplicaCount: 1
 NodePortNumber: 30001
 ```
 
 Al fitxer del deployment.yaml afegir els valors que volem que l'usuari pugui modificar en realitzar la instal·lació:
 
-```
+```yaml
 spec:
   replicas: {{ .Values.ReplicaCount }}
   selector:
@@ -167,23 +167,23 @@ spec:
 ```
 * Situar-se a un nivell superior de la carpeta de l'aplicació i executar helm package graph-solver per empaquetar l'aplicació i helm repo index per generar un fitxer index.yaml del repositori.
 
-```
+```bash
 helm package graph-solver
 ```
 
-```
+```bash
 helm repo index .
 ```
 
 A partir d'aquí es pot penjar en el repositori oficial d'Helm o bé penjarlo en un servidor web propi, en aquest cas per fer una prova es pot crear un contenidor docker i afegir el contingut.
 
-```
+```bash
 docker run -dp 3000:80 -v $(pwd):/usr/local/apache2/htdocs/ --name repohelm httpd:alpine
 ```
 
 ### Instal·lació del chart graph-solver
 
-```
+```bash
 helm repo add josan http://localhost:3000
 helm show values josan/graph-solver
 helm install graph-solver josan/graph-solver -f values2.yaml
@@ -193,7 +193,7 @@ helm list
 
 ### Desinstalació del chart i el repositori  
 
-```
+```bash
 helm uninstall graph-solver
 helm repo remove josan
 helm repo list

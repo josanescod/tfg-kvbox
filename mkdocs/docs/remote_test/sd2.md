@@ -6,7 +6,7 @@ Instal·lar a la nova màquina kubeadm, seguint els passos d'aquest enllaç: [ku
 
 Configurar el firewall del nou node, obrir el port 8472/udp (que utilitza [cilium](https://docs.cilium.io/en/stable/network/concepts/routing/){:target="_blank"}) 
 
-```
+```bash
 sudo ufw allow 10250/tcp
 sudo ufw allow 30000:32767/tcp
 sudo ufw allow 8472/udp
@@ -14,14 +14,14 @@ sudo ufw allow 8472/udp
 
 Executar la següent instrucció  al controlplane, 
 
-```
+```bash
 kubeadm token create --print-join-command
 
 ```
 
 Al worker2 executar el resultat de la comanda anterior que ha generat un nou token per unir el nou node al clúster.
 
-```
+```bash
 kubeadm join --token token_exemple controlplane:6443 \
 --discovery-token-ca-cert-hash sha256:hash_exemple 
 ```
@@ -30,7 +30,7 @@ kubeadm join --token token_exemple controlplane:6443 \
 
 [chart-influxdb2](https://github.com/influxdata/helm-charts/tree/master/charts/influxdb2){:target="_blank"}
 
-```
+```bash
 helm repo add influxdata https://helm.influxdata.com/
 helm repo update
 helm install influxdb influxdata/influxdb2 --set persistence.enabled=false
@@ -42,9 +42,32 @@ echo $(kubectl get secret influxdb-influxdb2-auth -o "jsonpath={.data['admin-pas
 
 Entrar amb l'usuari/contrassenya i crear una organització, un bucket i un API token.
 
-## Instal·lació de telegraf
+* Automatitzar crear organització test
+
+```bash
+influx org create -n test
 
 ```
+
+* Automatitzar crear bucket test
+
+```bash
+influx bucket create \
+  --name my_schema_bucket \
+  --schema-type explicit
+```
+
+* Automatitzar crear un API token de test
+
+```bash
+influx auth create \
+  --org test \
+  --read-bucket 03a2bbf46309a000 \
+```
+
+## Instal·lació de telegraf
+
+```bash
 helm repo add influxdata https://helm.influxdata.com/
 helm repo update
 helm install telegraf -f apps/config/telegraf-config.yaml --set tplVersion=2 influxdata/telegraf
@@ -56,7 +79,7 @@ Modificar inputs i outputs
 inputs amb el plugin [kube_inventory](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/kube_inventory){:target="_blank"}
 
 
-```
+```yaml
 # telegraf-config.yaml
 ## Default values.yaml for Telegraf
 ## This is a YAML-formatted file.
@@ -258,18 +281,18 @@ pdb:
 
 Executar el pod:
 
-```
+```bash
 kubectl exec -i -t --namespace default $(kubectl get pods --namespace default -l app.kubernetes.io/name=telegraf -o jsonpath='{.items[0].metadata.name}') /bin/sh
 
 ```
 Veure logs:
 
-```
+```bash
 kubectl logs -f --namespace default $(kubectl get pods --namespace default -l app.kubernetes.io/name=telegraf -o jsonpath='{ .items[0].metadata.name }')
 ```
 ## Instal·lació  de Grafana
 
-```
+```bash
 helm upgrade --install grafana grafana/grafana
 
 # token

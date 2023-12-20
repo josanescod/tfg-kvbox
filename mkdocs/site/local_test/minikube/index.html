@@ -833,114 +833,114 @@
 <p><img alt="" src="../../img/demo2.png" /></p>
 <p>Crear un clúster amb minikube i provar diverses funcionalitats: deployment, autoescaling, rollout.</p>
 <h2 id="crear-un-cluster-de-kubernetes-amb-3-nodes">Crear un cluster de kubernetes amb 3 nodes.</h2>
-<div class="highlight"><pre><span></span><code>minikube start -n 3
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>minikube<span class="w"> </span>start<span class="w"> </span>-n<span class="w"> </span><span class="m">3</span>
+</span></code></pre></div>
 <h2 id="activar-dos-addons-de-minikube-metriques-i-dashboard">Activar dos addons de minikube: mètriques i dashboard.</h2>
-<div class="highlight"><pre><span></span><code>minikube addons list
-minikube addons enable metrics-server
-minikube addons enable dashboard
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>minikube<span class="w"> </span>addons<span class="w"> </span>list
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>minikube<span class="w"> </span>addons<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>metrics-server
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>minikube<span class="w"> </span>addons<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>dashboard
+</span></code></pre></div>
 <h2 id="etiquetes-de-rol-als-dos-nodes-workers">Etiquetes de rol als dos nodes workers.</h2>
-<div class="highlight"><pre><span></span><code>kubectl label node minikube-m02 node-role.kubernetes.io/worker=worker
-kubectl label node minikube-m03 node-role.kubernetes.io/worker=worker
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>minikube-m02<span class="w"> </span>node-role.kubernetes.io/worker<span class="o">=</span>worker
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span>minikube-m03<span class="w"> </span>node-role.kubernetes.io/worker<span class="o">=</span>worker
+</span></code></pre></div>
 <h2 id="treballar-en-un-nou-namespace-test">Treballar en un nou namespace 'test'.</h2>
 <p>Un namespace és una subdivisió virtual d'un clúster, permet
 separar i organitzar els recursos segons diferents propòsits, com ara testing, desenvolupament, producció. Si s'esborra un namespace, s'esborren també tots els seus recursos (pods, services, deployments, etc.)</p>
 <p>Un context defineix si un clúster és local o remot, l'usuari que hi té accés, i un namespace predeterminat. S'utilitza per canviar ràpidament en entorns amb diferents clústers o en entorns dins de Kubernetes.</p>
-<div class="highlight"><pre><span></span><code>kubectl get namespaces
-kubectl create namespace testing
-kubectl config view | grep current-context
-kubectl config set-context minikube --namespace=testing
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>namespaces
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>testing
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>kubectl<span class="w"> </span>config<span class="w"> </span>view<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>current-context
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>minikube<span class="w"> </span>--namespace<span class="o">=</span>testing
+</span></code></pre></div>
 <h2 id="crear-un-deployment-amb-3-pods">Crear un deployment amb 3 pods.</h2>
 <p>Un deployment és un recurs de Kubernetes que defineix l'estat desitjat per a les aplicacions en execució d'un clúster. Permet declarar, actualitzar i escalar aplicacions.</p>
-<div class="highlight"><pre><span></span><code>apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-node-deployment
-  labels:
-    app: my-node
-spec: 
-  replicas: 3
-  selector:
-    matchLabels:
-      app: my-node
-  template:
-    metadata:
-      labels:
-        app: my-node
-    spec:
-      containers:
-      - name: my-node-container
-        image: josanescod/node-simple-app:1.0
-        ports:
-        - containerPort: 3000
-</code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node-deployment</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node-container</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">josanescod/node-simple-app:1.0</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+</span></code></pre></div>
 <p>kubectl apply -f deployment1.yaml
 kubectl describe pods | grep 'Image'</p>
 <h2 id="eliminar-un-pod-i-veure-com-kubernetes-ho-detecta-i-torna-a-crear-un-de-nou">Eliminar un pod i veure com kubernetes ho detecta i torna a crear un de nou.</h2>
-<div class="highlight"><pre><span></span><code>kubectl delete pod my-node-deployment-79dd7879c7-5qb4c
-kubectl get pods
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>my-node-deployment-79dd7879c7-5qb4c
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+</span></code></pre></div>
 <h2 id="autoescaling-manual-augmentar-i-disminuir-la-quantitat-de-pods">Autoescaling manual: augmentar i disminuir la quantitat de pods.</h2>
-<div class="highlight"><pre><span></span><code>kubectl scale --replicas 5 deployment.apps/my-node-deployment
-kubectl scale --replicas 2 deployment.apps/my-node-deployment
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>--replicas<span class="w"> </span><span class="m">5</span><span class="w"> </span>deployment.apps/my-node-deployment
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>kubectl<span class="w"> </span>scale<span class="w"> </span>--replicas<span class="w"> </span><span class="m">2</span><span class="w"> </span>deployment.apps/my-node-deployment
+</span></code></pre></div>
 <h2 id="crear-un-servei-de-tipus-nodeport-per-exposar-els-pods-fora-del-cluster">Crear un servei de tipus NodePort per exposar els pods fora del clúster.</h2>
 <p>Un servei de tipus NodePort proporciona una IP interna, i obre un port a cada node del clúster, que permet accedir al servei des de fora del clúster utilitzant la IP del node i el port assignat.</p>
-<div class="highlight"><pre><span></span><code>apiVersion: v1
-kind: Service
-metadata:
-  name: my-node-service
-spec:
-  selector:
-    app: my-node
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 3000
-  type: NodePort
-</code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node-service</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodePort</span>
+</span></code></pre></div>
 <p>kubectl apply -f service.yaml</p>
 <h2 id="mostrar-en-un-navegador-laplicacio-my-node-app-amb-kubectl-port-forward">Mostrar en un navegador l'aplicació my-node-app amb kubectl port-forward</h2>
-<div class="highlight"><pre><span></span><code>kubectl get svc
-ip=$(minikube ip)
-curl $ip:NodePort
-
-kubectl port-forward --address 0.0.0.0 7000:80
-obrir el navegador amb l&#39;adreça http://172.16.2.5:7000
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="nv">ip</span><span class="o">=</span><span class="k">$(</span>minikube<span class="w"> </span>ip<span class="k">)</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>curl<span class="w"> </span><span class="nv">$ip</span>:NodePort
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>--address<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span><span class="m">7000</span>:80
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>obrir<span class="w"> </span>el<span class="w"> </span>navegador<span class="w"> </span>amb<span class="w"> </span>l<span class="err">&#39;</span>adreça<span class="w"> </span>http://172.16.2.5:7000
+</span></code></pre></div>
 <h2 id="executar-un-segon-deployment-que-fa-un-rollout-dels-pods">Executar un segon deployment que fa un rollout dels pods</h2>
-<div class="highlight"><pre><span></span><code>apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: my-node-deployment
-  labels:
-    app: my-node
-spec: 
-  replicas: 3
-  selector:
-    matchLabels:
-      app: my-node
-  minReadySeconds: 20
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-  template:
-    metadata:
-      labels:
-        app: my-node
-    spec:
-      containers:
-      - name: my-node-container
-        imagePullPolicy: Always
-        image: josanescod/node-simple-app:2.0
-        ports:
-        - containerPort: 3000
-</code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apps/v1</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deployment</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node-deployment</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span><span class="nt">minReadySeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">  </span><span class="nt">strategy</span><span class="p">:</span>
+</span><span id="__span-9-14"><a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RollingUpdate</span>
+</span><span id="__span-9-15"><a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a><span class="w">    </span><span class="nt">rollingUpdate</span><span class="p">:</span>
+</span><span id="__span-9-16"><a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="w">      </span><span class="nt">maxSurge</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-9-17"><a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a><span class="w">      </span><span class="nt">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+</span><span id="__span-9-18"><a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a><span class="w">  </span><span class="nt">template</span><span class="p">:</span>
+</span><span id="__span-9-19"><a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-9-20"><a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a><span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
+</span><span id="__span-9-21"><a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node</span>
+</span><span id="__span-9-22"><a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a><span class="w">    </span><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-9-23"><a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a><span class="w">      </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-9-24"><a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-node-container</span>
+</span><span id="__span-9-25"><a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a><span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span>
+</span><span id="__span-9-26"><a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">josanescod/node-simple-app:2.0</span>
+</span><span id="__span-9-27"><a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a><span class="w">        </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-9-28"><a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+</span></code></pre></div>
 <p>Un rollout és una actualització d'un deployment de manera controlada i gradual.</p>
 <p>minReadySeconds: temps mínim que un pod té que està en estat 'READY' abans de considerar-se disponible. Serveix per donar un temps d'espera entre actualització de cada pod.</p>
 <p>maxSurge: nombre màxim de pods adicionals que es poden crear per sobre de les rèpliques declarades. Permet un augment d'un pod temporal per sobre de les rèpliques (3) per facilitar l'actualització gradual sense interrupcions. </p>
@@ -949,13 +949,13 @@ spec:
 <p>kubectl rollout status deployment/my-node-deployment</p>
 <p>kubectl describe pods | grep 'Image'</p>
 <h2 id="mostrar-en-un-navegador-que-my-node-app-sha-actualitzat-a-la-versio-20">Mostrar en un navegador que my-node-app s'ha actualitzat a la versió 2.0</h2>
-<div class="highlight"><pre><span></span><code>kubectl port-forward --address 0.0.0.0 7000:80
-obrir el navegador amb l&#39;adreça http://172.16.2.5:7000
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>--address<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span><span class="m">7000</span>:80
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>obrir<span class="w"> </span>el<span class="w"> </span>navegador<span class="w"> </span>amb<span class="w"> </span>l<span class="err">&#39;</span>adreça<span class="w"> </span>http://172.16.2.5:7000
+</span></code></pre></div>
 <h2 id="mostrar-el-dashboard-del-cluster">Mostrar el dashboard del cluster.</h2>
-<div class="highlight"><pre><span></span><code>minikube dashboard --url &amp;
-kubectl proxy --address=0.0.0.0 --accept-hosts=&#39;.*&#39; &amp;
-</code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>minikube<span class="w"> </span>dashboard<span class="w"> </span>--url<span class="w"> </span><span class="p">&amp;</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>kubectl<span class="w"> </span>proxy<span class="w"> </span>--address<span class="o">=</span><span class="m">0</span>.0.0.0<span class="w"> </span>--accept-hosts<span class="o">=</span><span class="s1">&#39;.*&#39;</span><span class="w"> </span><span class="p">&amp;</span>
+</span></code></pre></div>
 
 
 

@@ -10,13 +10,13 @@ Crear un clúster amb minikube i provar diverses funcionalitats: deployment, aut
 
 ## Crear un cluster de kubernetes amb 3 nodes.
 
-```
+```bash
 minikube start -n 3
 ```
 
 ## Activar dos addons de minikube: mètriques i dashboard.
 
-```
+```bash
 minikube addons list
 minikube addons enable metrics-server
 minikube addons enable dashboard
@@ -24,7 +24,7 @@ minikube addons enable dashboard
 
 ## Etiquetes de rol als dos nodes workers.
 
-```
+```bash
 kubectl label node minikube-m02 node-role.kubernetes.io/worker=worker
 kubectl label node minikube-m03 node-role.kubernetes.io/worker=worker
 ```
@@ -36,7 +36,7 @@ separar i organitzar els recursos segons diferents propòsits, com ara testing, 
 
 Un context defineix si un clúster és local o remot, l'usuari que hi té accés, i un namespace predeterminat. S'utilitza per canviar ràpidament en entorns amb diferents clústers o en entorns dins de Kubernetes.
 
-```
+```bash
 kubectl get namespaces
 kubectl create namespace testing
 kubectl config view | grep current-context
@@ -47,7 +47,7 @@ kubectl config set-context minikube --namespace=testing
 
 Un deployment és un recurs de Kubernetes que defineix l'estat desitjat per a les aplicacions en execució d'un clúster. Permet declarar, actualitzar i escalar aplicacions.
 
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -76,14 +76,14 @@ kubectl describe pods | grep 'Image'
 
 ## Eliminar un pod i veure com kubernetes ho detecta i torna a crear un de nou.
 
-```
+```bash
 kubectl delete pod my-node-deployment-79dd7879c7-5qb4c
 kubectl get pods
 ```
 
 ## Autoescaling manual: augmentar i disminuir la quantitat de pods.
 
-```
+```bash
 kubectl scale --replicas 5 deployment.apps/my-node-deployment
 kubectl scale --replicas 2 deployment.apps/my-node-deployment
 ```
@@ -92,7 +92,7 @@ kubectl scale --replicas 2 deployment.apps/my-node-deployment
 
 Un servei de tipus NodePort proporciona una IP interna, i obre un port a cada node del clúster, que permet accedir al servei des de fora del clúster utilitzant la IP del node i el port assignat.
 
-```
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -111,7 +111,7 @@ kubectl apply -f service.yaml
 
 ## Mostrar en un navegador l'aplicació my-node-app amb kubectl port-forward
 
-```
+```bash
 kubectl get svc
 ip=$(minikube ip)
 curl $ip:NodePort
@@ -121,7 +121,7 @@ obrir el navegador amb l'adreça http://172.16.2.5:7000
 ```
 ## Executar un segon deployment que fa un rollout dels pods
 
-```
+```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -168,14 +168,14 @@ kubectl describe pods | grep 'Image'
 
 ## Mostrar en un navegador que my-node-app s'ha actualitzat a la versió 2.0
 
-```
+```bash
 kubectl port-forward --address 0.0.0.0 7000:80
 obrir el navegador amb l'adreça http://172.16.2.5:7000
 ```
 
 ## Mostrar el dashboard del cluster. 
 
-```
+```bash
 minikube dashboard --url &
 kubectl proxy --address=0.0.0.0 --accept-hosts='.*' &
 ```

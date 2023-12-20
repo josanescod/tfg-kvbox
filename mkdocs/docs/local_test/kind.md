@@ -16,7 +16,7 @@ virtual de l'entorn de proves.
 
 Creem un fitxer kind-example-config.yaml amb el següent contingut:
 
-``` 
+``` yaml
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
 nodes:
@@ -33,7 +33,8 @@ kind create cluster --config kind-example-config.yaml
 export KUBECONFIG per poder utilizar kubectl
 
 ## Etiquetes de rol als dos nodes workers
-```
+
+```bash
 kubectl label node kind-worker node-role.kubernetes.io/worker=worker
 kubectl label node kind-worker2 node-role.kubernetes.io/worker=worker
 
@@ -44,7 +45,7 @@ kubectl label node kind-worker2 node-role.kubernetes.io/worker=worker
 Un DaemonSet és un recurs de Kubernetes que s'assegura que a cada node del clúster es desplegui una còpia d'un pod. 
 S'utilitza per recol·lecció de logs, monitoratge de nodes o per executar processos relacionats amb volums, en segon pla. 
 
-```
+```yaml
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -66,6 +67,7 @@ spec:
         image: fluentd:latest
 
 ```
+
 kubectl apply -f daemonset.yaml
 kubectl get daemonsets
 kubectl get pods -n default -o wide
@@ -77,7 +79,7 @@ Un Job és un recurs que pot crear 1 o més pods per executar tasques en paral.l
 batch, càlculs d'operacions que requereixen gran quantitat de recursos de computació. Alguns exemples són: càlculs de decimals del nombre pi,
 consultes a bases de dades, renderització, etc.
 
-```
+```yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -100,13 +102,14 @@ spec:
           curl -H "Accept: application/json" https://swapi.dev/api/people/?search=yoda | jq '.results[] | { name, homeworld, species }'
       restartPolicy: Never
 ```
+
 kubectl apply -f job.yaml
 
 ## Cronjob
 
 Un Cronjob és similar a un Job, però que es planifica perquè es repeteixi periòdicament.
 
-```
+```yaml
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -126,13 +129,14 @@ spec:
             - date; echo Hello from the Kubernetes cluster
           restartPolicy: OnFailure
 ```
+
 kubectl apply -f cronjob.yaml
 
 ## ConfigMap
 
 Un ConfigMap és un recurs de Kubernetes que permet emmagatzemar dades de configuració com ara variables d'entorn, nombre de ports, entre d'altres i poder-los aplicar en altres fitxers manifests.
 
-```
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -141,9 +145,10 @@ data:
   VARIABLE1: mongodb
   VARIABLE2: redis
 ```
+
 kubectl apply -f config_map.yaml i després es pot referenciar la configuració a altres fitxers manifest.
 
-```
+```yaml
   containers:
   - name: container1
     image: nginx:alpine
@@ -154,6 +159,7 @@ kubectl apply -f config_map.yaml i després es pot referenciar la configuració 
     - configMapRef:
         name: my-configmap
 ```
+
 Es poden crear aplicant kubectl apply -f configmap.yaml (mode declaratiu) o bé a través de la línia de d'ordres com la majoria d'objectes de Kubernetes (mode imperatiu).
 
 ## Secret
@@ -162,16 +168,17 @@ Un Secret és un objecte de Kubernetes que s'utilitza per emmagatzemar informaci
 
 Es pot codificar/decodificar:
 
-```
+```bash
 echo -n "Tyrion" | base64
 echo -n "VHlyaW9u" | base64 --decode
 
 ```
+
 És important destacar, que no és una manera d'encriptar dades crítiques, s'utilitza més aviat per ofuscar la informació, representar dades en un conjunt estàndard de caràcters,
 permetre incloure dades binàries o sensibles directament als manifests i és una manera estandarditzada de compartir informació, però es recomana afegir capes de seguretat
 per a dades delicades.
 
-```
+```yaml
 apiVersion: v1
 data:
   username: VHlyaW9u
@@ -185,13 +192,14 @@ metadata:
   uid: f62ae573-a38e-4dc4-beae-198752c267de
 type: Opaque
 ```
+
 kubectl apply -f my-secret.yaml
 
 o bé de forma imperativa '''kubectl create secret generic my-secret --from-literal=username=my-username --from-literal=password=my-password -o yaml >> my-secret.yaml'''
 
 Una vegada es crea el secret es pot afegir als manifests yamls, com per exemple a un pod:
 
-```
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -214,7 +222,7 @@ Aquesta eina permet encriptar secrets amb un certificat, i després el mateix cl
 
 Una vegada tenim descarregat el client i el Sealed Secrets Controller, podem crear un secret:
 
-```
+```yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -228,19 +236,19 @@ data:
 
 Obtenim la clau pública del certificat
 
-```
+```bash
 kubeseal --fetch-cert > public-key-cert.pem
 ```
 
 Encriptem el fitxer yaml del secret
 
-```
+```bash
 kubeseal --format=yaml --cert=public-key-cert.pem < secret.yaml > sealed-secret.yaml
 ```
 
 y quedaria de la següent manera:
 
-```
+```yaml
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
@@ -257,6 +265,7 @@ spec:
       name: my-secret-test
       namespace: default
 ```
+
 kubectl delete -f secret.yaml
 
 kubectl apply -f sealed-secret.yaml
