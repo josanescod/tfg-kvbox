@@ -150,7 +150,7 @@ config:
           - "https://influxdb.josanesc.com"
         bucket: "test"
         organization: "test"
-        token: "ySJC4OJkaNcPbSZkmFvevXOEnReWx70Lvl9_NJ5mlWYPjQ4yhP2ivbNHzio6VIhX3lk2X667wp42E6tr2qWPDg=="
+        token: ""
         timeout: "5s"
         insecure_skip_verify: false
 
