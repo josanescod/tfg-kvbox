@@ -31,19 +31,33 @@ kubeadm join --token token_exemple controlplane:6443 \
 [chart-influxdb2](https://github.com/influxdata/helm-charts/tree/master/charts/influxdb2){:target="_blank"}
 
 ```
-helm upgrade --install influxdb influxdata/influxdb2 --set persistence.enabled=false
+helm repo add influxdata https://helm.influxdata.com/
+helm repo update
+helm install influxdb influxdata/influxdb2 --set persistence.enabled=false
+
+# token
+echo $(kubectl get secret influxdb-influxdb2-auth -o "jsonpath={.data['admin-password']}" --namespace default | base64 --decode)
+
 ```
 
-Entrar amb l'usuari/contrassenya i crear una organització, un bucker i un API token.
+Entrar amb l'usuari/contrassenya i crear una organització, un bucket i un API token.
 
 ## Instal·lació de telegraf
 
 ```
-helm upgrade --install telegraf -f values.yaml --set tplVersion=2 influxdata/telegraf
+helm repo add influxdata https://helm.influxdata.com/
+helm repo update
+helm install telegraf -f apps/config/telegraf-config.yaml --set tplVersion=2 influxdata/telegraf
 ```
+Fitxer de configuració de telegraf
+
+Modificar inputs i outputs
+
+inputs amb el plugin [kube_inventory](https://github.com/influxdata/telegraf/tree/master/plugins/inputs/kube_inventory){:target="_blank"}
+
 
 ```
-# values.yaml
+# telegraf-config.yaml
 ## Default values.yaml for Telegraf
 ## This is a YAML-formatted file.
 ## ref: https://hub.docker.com/r/library/telegraf/tags/
@@ -100,7 +114,7 @@ affinity: {}
 ##
 tolerations: []
 # - key: "key"
-#   operator: "Equal|Exists
+#   operator: "Equal|Exists"
 #   value: "value"
 #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
 
@@ -118,49 +132,49 @@ service:
   annotations: {}
 rbac:
   # Specifies whether RBAC resources should be created
-  create: true
+  create: true 
   # Create only for the release namespace or cluster wide (Role vs ClusterRole)
   clusterWide: false
   # Rules for the created rule
-  rules: []
+  # rules: []
+  rules:
 # When using the prometheus input to scrape all pods you need extra rules set to the ClusterRole to be
 # able to scan the pods for scraping labels. The following rules have been taken from:
 # https://github.com/helm/charts/blob/master/stable/prometheus/templates/server-clusterrole.yaml#L8-L46
-#    - apiGroups:
-#        - ""
-#      resources:
-#        - nodes
-#        - nodes/proxy
-#        - nodes/metrics
-#        - services
-#        - endpoints
-#        - pods
-#        - ingresses
-#        - configmaps
-#      verbs:
-#        - get
-#        - list
-#        - watch
-#    - apiGroups:
-#        - "extensions"
-#      resources:
-#        - ingresses/status
-#        - ingresses
-#      verbs:
-#        - get
-#        - list
-#        - watch
-#    - nonResourceURLs:
-#        - "/metrics"
-#      verbs:
-#        - get
-
+    - apiGroups:
+        - ""
+      resources:
+        - nodes
+        - nodes/proxy
+        - nodes/metrics
+        - services
+        - endpoints
+        - pods
+        - ingresses
+        - configmaps
+      verbs:
+        - get
+        - list
+        - watch
+    - apiGroups:
+        - "extensions"
+      resources:
+        - ingresses/status
+        - ingresses
+      verbs:
+        - get
+        - list
+        - watch
+          #    - nonResourceURLs:
+          #        - "/metrics"
+      verbs:
+        - get
 serviceAccount:
   # Specifies whether a ServiceAccount should be created
-  create: true
-# The name of the ServiceAccount to use.
+  create: true 
+  # The name of the ServiceAccount to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: "telegraf-sa"
+  name: 
   # Annotations for the ServiceAccount
   annotations: {}
 ## Exposed telegraf configuration
@@ -196,12 +210,20 @@ config:
           - "https://influxdb.josanesc.com"
         bucket: "test"
         organization: "test"
-        token: "Zt6DLvnRqCvSmvVOka_93SIoZdhSiFxcroj8P2jal0-3vxGxnMymWo8DoaJPqBaqaR1qN_CnyAxM3r6wAWQQ9Q=="
+        token: "ySJC4OJkaNcPbSZkmFvevXOEnReWx70Lvl9_NJ5mlWYPjQ4yhP2ivbNHzio6VIhX3lk2X667wp42E6tr2qWPDg=="
         timeout: "5s"
         insecure_skip_verify: false
 
 
   inputs:
+    - kube_inventory:
+        url: ""
+
+    - http_response :
+        urls: ["https://k8s-tfg.josanesc.com", "https://dashboard.josanesc.com", "https://chat-ai.josanesc.com", "https://repository.josanesc.com", "https://grafana.josanesc.com", "https://codeserver.josanesc.com", "https://docs.josanesc.com", "https://influxdb.josanesc.com"]
+        method: "GET"
+        follow_redirects: true 
+
     - statsd:
         service_address: ":8125"
         percentiles:
@@ -211,12 +233,6 @@ config:
         metric_separator: "_"
         allowed_pending_messages: 10000
         percentile_limit: 1000
-    
-        # - kube_inventory:
-        # URL for the Kubernetes API
-        #  url: "https://178.18.248.91"
-        #bearer_token: "/home/josan/manifests/telegraf.txt" 
-
 metrics:
   health:
     enabled: false
@@ -255,4 +271,7 @@ kubectl logs -f --namespace default $(kubectl get pods --namespace default -l ap
 
 ```
 helm upgrade --install grafana grafana/grafana
+
+# token
+kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 ```
